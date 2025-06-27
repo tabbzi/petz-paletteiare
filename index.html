@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Petz Paletteaire</title>
+	<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Roboto+Mono:wght@400&display=swap" rel="stylesheet">
+	<style>
+		body {
+			font-family: 'Press Start 2P';
+			font-size: 1.0em;
+			background-color: #2f2f2f;
+			color: #e0e0e0;
+			margin: 5px;
+			padding: 5px;
+		}
+	
+		.note {
+			font-family: 'Roboto Mono';
+			font-size: 0.8em;
+			color: #e0e0e0;
+		}
+	
+		h1 {
+			font-size: 1.2em;
+			color: #ffffff;
+			text-align: center;
+			text-shadow: 2px 2px 4px #000000;
+		}
+	
+		h2 {
+			font-size: 1.1em;
+			color: #ffffff;
+			text-align: center;
+			text-shadow: 2px 2px 4px #000000;
+		}
+
+		p {
+			font-family: 'Roboto Mono';
+		}
+	
+		a:link,
+		a:visited {
+			color: #00bfa5;
+			text-decoration: none;
+		}
+	
+		a:hover {
+			color: #1de9b6;
+			text-decoration: underline;
+		}
+	
+		a:active {
+			color: #00bfa5;
+		}
+
+		.widget-container {
+			background-color: #1a1a1a;
+			border: 2px solid #444;
+			border-radius: 12px;
+			padding: 1.5em;
+			margin: 1.5em auto;
+			max-width: 640px;
+			box-shadow: 0 0 12px #000;
+		}
+
+		.widget-container h2 {
+			margin-top: 0;
+			color: #00e5ff;
+			font-size: 1em;
+			text-align: center;
+		}
+
+		.widget-section {
+			margin: 1em 0;
+		}
+
+		label {
+			display: block;
+			margin: 1em 0;
+			color: #e0e0e0;
+		}
+
+		input[type="file"] {
+			display: block;
+			margin-top: 0.3em;
+		}
+
+		button {
+			margin-top: 1em;
+			font-family: 'Press Start 2P', monospace;
+			font-size: 0.7em;
+			padding: 0.5em 1em;
+			color: #fff;
+			background-color: #00bfa5;
+			border: none;
+			border-radius: 6px;
+			cursor: pointer;
+		}
+
+		button:hover {
+			background-color: #1de9b6;
+		}
+
+		input {
+			margin-top: 1em;
+			font-family: 'Press Start 2P', monospace;
+			font-size: 0.7em;
+			padding: 0.5em 1em;
+			color: #fff;
+			background-color: #00bfa5;
+			border: none;
+			border-radius: 6px;
+			cursor: pointer;
+		}
+
+		input:hover {
+			background-color: #1de9b6;
+		}
+
+		#links a {
+			display: inline-block;
+			margin: 0.3em;
+			font-size: 0.75em;
+		}
+
+		.input-wrapper {
+			position: relative;
+			display: inline-block;
+			width: 100%;
+			margin-top: 0.5em;
+		}
+
+		.input-wrapper input[type="file"] {
+			position: absolute;
+			left: 0;
+			top: 0;
+			opacity: 0;
+			width: 100%;
+			height: 100%;
+			cursor: pointer;
+		}
+
+		.input-wrapper .fake-button {
+			background-color: #00bfa5;
+			color: #000;
+			border: none;
+			border-radius: 6px;
+			padding: 0.5em 1em;
+			font-family: 'Press Start 2P', monospace;
+			font-size: 0.7em;
+			cursor: pointer;
+			display: inline-block;
+			text-align: center;
+			width: 100%;
+			box-shadow: 2px 2px 0 #004d40;
+		}
+
+		.input-wrapper .fake-button:hover {
+			background-color: #1de9b6;
+		}
+
+		.preview-grid {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 1em;
+			margin-top: 1em;
+		}
+
+		.preview-grid canvas {
+			border: 1px solid #555;
+			background: #111;
+			width: auto;
+			height: 100px;
+			image-rendering: pixelated;
+		}
+
+		.preview-grid img {
+			border: 1px solid #444;
+			background: #000;
+			max-width: 100px;
+			height: auto;
+			image-rendering: pixelated;
+			cursor: zoom-in;
+			transition: transform 0.1s ease;
+		}
+
+		.preview-grid img.enlarged {
+			position: fixed;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+			width: auto;
+			height: auto;
+			max-width: none;
+			max-height: none;
+			z-index: 1000;
+			border: 2px solid #888;
+			background: #000;
+			cursor: zoom-out;
+			image-rendering: pixelated;
+		}
+	</style>
+</head>
+
+<body>
+	<h1>Petz Paletteiare</h1>
+	<h2>v1.0</h2>
+	<p>A handy web app for swapping palettes in bulk!</p>
+	<p>- Kathleen @ <a href="https://www.tabbloza.com/petz">Tabbloza</a></p>
+
+	<div class="widget-container">
+		<h2>Bulk Palette Swap</h2>
+		<p>Select a folder of images (PNG files), any image file using the same base palette (important! if you have pictures of a pet that uses palettes, this base palette needs to be that pet's palette... or an image indexed in that same palette), and a folder of all palettes that you would like to recolor images.</p>
+		<div class="widget-section">
+			<div class="input-wrapper">
+				<span class="fake-button">Choose PNG Folder</span>
+				<input type="file" id="imgDir" webkitdirectory directory multiple accept=".png">
+			</div>
+			
+			<div class="input-wrapper">
+				<span class="fake-button">Choose Base Palette</span>
+				<input type="file" id="basePal" accept=".bmp,.act,.pal,.png">
+			</div>
+			
+			<div class="input-wrapper">
+				<span class="fake-button">Choose Palette Folder</span>
+				<input type="file" id="palDir" webkitdirectory directory multiple>
+			</div>
+			
+			<button id="run">Process</button>
+		</div>
+		
+		<div class="widget-section">
+			<h3>Downloads</h3>
+			<div id="links"></div>
+			<button id="downloadAll" style="display:none;">Download All</button>
+
+			<h3>Previews</h3>
+			<div id="preview" class="preview-grid"></div>
+		</div>
+	</div>
+
+	<script>
+		const $ = id => document.getElementById(id);
+		const dist = (a, b) => ((a[0] - b[0]) ** 2 + (a[1] - b[1]) ** 2 + (a[2] - b[2]) ** 2);
+		const readBuf = f => new Promise(r => { const fr = new FileReader(); fr.onload = e => r(e.target.result); fr.readAsArrayBuffer(f); });
+		const readImg = f => new Promise(r => { const fr = new FileReader(); fr.onload = e => { const i = new Image(); i.onload = () => r(i); i.src = e.target.result; }; fr.readAsDataURL(f); });
+
+
+		async function parsePaletteFile(file) {
+			const buffer = await file.arrayBuffer();
+			const ext = file.name.split('.').pop().toLowerCase();
+			const bytes = new Uint8Array(buffer);
+			let palette = [];
+
+			if (ext === 'act' || ext === 'pal') {
+				// ACT/PAL: 768 bytes = 256 colors × 3 bytes
+				if (bytes.length < 768) {
+					console.error("ACT/PAL file too short, should be 768 bytes");
+					return [];
+				}
+				for (let i = 0; i < 768; i += 3) {
+					palette.push([bytes[i], bytes[i + 1], bytes[i + 2]]);
+				}
+			} else if (ext === 'bmp') {
+				// BMP: Palette starts after 54 bytes (14 BMP header + 40 DIB header) for 8-bit indexed BMP
+				// Each color is 4 bytes: B G R 00
+				const bmpHeaderSize = 54;
+				if (bytes.length < bmpHeaderSize + 256 * 4) {
+					console.error("BMP file too small for full palette");
+					return [];
+				}
+				for (let i = bmpHeaderSize; i < bmpHeaderSize + 256 * 4; i += 4) {
+					palette.push([bytes[i + 2], bytes[i + 1], bytes[i]]);
+				}
+			} else if (ext === 'png') {
+				// PNG: Find PLTE chunk (contains from 1 to 256 palette entries) after 8-byte PNG signature
+				let offset = 8;
+				while (offset < bytes.length) {
+					const length = (bytes[offset] << 24) | (bytes[offset + 1] << 16) | (bytes[offset + 2] << 8) | bytes[offset + 3];
+					const type = String.fromCharCode(...bytes.slice(offset + 4, offset + 8));
+					if (type === 'PLTE') {
+						for (let i = offset + 8; i < offset + 8 + length; i += 3) {
+							palette.push([bytes[i], bytes[i + 1], bytes[i + 2]]);
+						}
+						break;
+					}
+					offset += 8 + length + 4;
+				}
+			}
+
+			return palette.slice(0, 256);
+		}
+	
+		function indexImage(img, basePal) {
+			const cv = document.createElement('canvas');
+			cv.width = img.width; cv.height = img.height;
+			const cx = cv.getContext('2d'); cx.drawImage(img, 0, 0);
+			const id = cx.getImageData(0, 0, cv.width, cv.height), d = id.data;
+			const idx = [], alpha = [];
+			for (let p = 0; p < d.length; p += 4) {
+				let best = 0, m = 1e9;
+				for (let i = 0; i < 256; i++) {
+					const dd = dist([d[p], d[p + 1], d[p + 2]], basePal[i]);
+					if (dd < m) { m = dd; best = i; }
+				}
+				idx.push(best);
+				alpha.push(d[p + 3]);
+			}
+			return { idx, alpha, w: cv.width, h: cv.height };
+		}
+
+		function drawIndexed({ idx, alpha, w, h }, pal) {
+			const cv = document.createElement('canvas');
+			cv.width = w; cv.height = h;
+			const cx = cv.getContext('2d');
+			const id = cx.createImageData(w, h);
+			for (let i = 0; i < idx.length; i++) {
+				const [r, g, b] = pal[idx[i]];
+				const o = i * 4;
+				id.data[o] = r;
+				id.data[o + 1] = g;
+				id.data[o + 2] = b;
+				id.data[o + 3] = alpha[i]; // use original alpha
+			}
+			cx.putImageData(id, 0, 0);
+			return cv;
+		}
+
+
+		$('run').onclick = async () => {
+			const imgs = $('imgDir').files, baseFile = $('basePal').files[0], pals = $('palDir').files
+			$('links').innerHTML = ''
+			$('preview').innerHTML = ''
+			if (!imgs.length || !baseFile || !pals.length) return
+			const basePal = await parsePaletteFile(baseFile)
+			if (basePal.length !== 256) { alert('Base palette must have 256 colours'); return }
+			const palMap = {}
+			for (const f of pals) palMap[f.name.replace(/\.[^.]+$/, '')] = await parsePaletteFile(f)
+			for (const imgF of imgs) {
+				const img = await readImg(imgF)
+				const indexed = indexImage(img, basePal)
+				for (const [pName, pal] of Object.entries(palMap)) {
+					if (pal.length !== 256) continue
+					const cv = drawIndexed(indexed, pal)
+					const blob = await new Promise(r => cv.toBlob(r, 'image/png'))
+					const url = URL.createObjectURL(blob)
+					const a = document.createElement('a')
+					a.href = url
+					a.download = `${pName}_${imgF.name}`
+					a.textContent = a.download
+					a.className = 'dl'
+					$('links').appendChild(a)
+					const thumb = new Image()
+					thumb.src = url
+					thumb.onclick = () => {
+						document
+							.querySelectorAll('.preview-grid img.enlarged')
+							.forEach(el => el !== thumb && el.classList.remove('enlarged'));
+						thumb.classList.toggle('enlarged');
+					};
+					thumb.style.imageRendering = 'pixelated'
+					$('preview').appendChild(thumb)
+				}
+			}
+
+			$('downloadAll').style.display = 'inline-block';
+		};
+
+		$('downloadAll').onclick = () => {
+				document.querySelectorAll('#links a.dl').forEach(a => a.click());
+			};
+	</script>
+</body>
+
+</html>

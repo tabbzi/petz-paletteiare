@@ -201,17 +201,56 @@
 			cursor: zoom-out;
 			image-rendering: pixelated;
 		}
+
+		.preview-item { text-align:center; max-width:110px; }
+		.preview-item p { margin:0.2em 0 0; font-size:0.6em; }
+
+		#sidebar {
+			position: fixed;
+			bottom: 20px;
+			left: 20px;
+			background-color: #1a1a1a;
+			border: 3px double #00e5ff;
+			border-radius: 16px 16px 16px 16px;
+			padding: 1em 1.2em;
+			z-index: 100;
+			max-width: 180px;
+			text-align: center;
+		}
+
+		#sidebar a {
+			display: block;
+			margin: 0.4em 0;
+			font-size: 0.65em;
+			color: #00e5ff;
+			text-decoration: none;
+			font-family: 'Press Start 2P', monospace;
+		}
+
+		#sidebar a:hover {
+			color: #1de9b6;
+			text-decoration: underline;
+		}
+
 	</style>
 </head>
 
 <body>
+	<div id="sidebar">
+		<a href="#header-input">Input</a>
+		<a href="#header-options">Options</a>
+		<a href="#header-downloads">Downloads</a>
+		<a href="#header-preview">Previews</a>
+		<a href="#header-palettes">Palettes</a>
+	</div>	
+
 	<h1>Petz Paletteiare</h1>
 	<h2>v1.0</h2>
 	<p>A handy web app for swapping palettes in bulk!</p>
 	<p>- Kathleen @ <a href="https://www.tabbloza.com/petz">Tabbloza</a></p>
 
 	<div class="widget-container">
-		<h2>Bulk Palette Swap</h2>
+		<h2 id="header-input">Bulk Palette Swap</h2>
 		<p>Select a folder of images (PNG files), any image file using the same base palette (important! if you have pictures of a pet that uses palettes, this base palette needs to be that pet's palette... or an image indexed in that same palette), and a folder of all palettes that you would like to recolor images.</p>
 		<div class="widget-section">
 			<div class="input-wrapper">
@@ -233,17 +272,30 @@
 		</div>
 		
 		<div class="widget-section">
-			<h3>Downloads</h3>
+			<h3 id="header-options">Options</h3>
+			<div id=""></div>
+
+			<h3 id="header-downloads">Downloads</h3>
 			<div id="links"></div>
 			<button id="downloadAll" style="display:none;">Download All</button>
 
-			<h3>Previews</h3>
+			<h3 id="header-preview">Previews</h3>
 			<div id="preview" class="preview-grid"></div>
+
+			<h3 id="header-palettes">Output [Palettes] Section</h3>
+			<textarea id="palOut" rows="6" style="width:100%;font-family:'Roboto Mono';font-size:0.7em;"></textarea>
+			
 		</div>
 	</div>
 
 	<script>
 		const $ = id => document.getElementById(id);
+		const selectedPals = new Set();
+
+		function updatePalOut() {
+			$('palOut').value = Array.from(selectedPals).join('\n');
+		}
+
 		const dist = (a, b) => ((a[0] - b[0]) ** 2 + (a[1] - b[1]) ** 2 + (a[2] - b[2]) ** 2);
 		const readBuf = f => new Promise(r => { const fr = new FileReader(); fr.onload = e => r(e.target.result); fr.readAsArrayBuffer(f); });
 		const readImg = f => new Promise(r => { const fr = new FileReader(); fr.onload = e => { const i = new Image(); i.onload = () => r(i); i.src = e.target.result; }; fr.readAsDataURL(f); });
@@ -353,16 +405,44 @@
 					a.textContent = a.download
 					a.className = 'dl'
 					$('links').appendChild(a)
-					const thumb = new Image()
-					thumb.src = url
+					const wrapper = document.createElement('div');
+					
+					wrapper.className = 'preview-item';
+
+					const thumb = new Image();
+					thumb.src = url;
 					thumb.onclick = () => {
-						document
-							.querySelectorAll('.preview-grid img.enlarged')
+						document.querySelectorAll('.preview-grid img.enlarged')
 							.forEach(el => el !== thumb && el.classList.remove('enlarged'));
 						thumb.classList.toggle('enlarged');
 					};
-					thumb.style.imageRendering = 'pixelated'
-					$('preview').appendChild(thumb)
+					thumb.style.imageRendering = 'pixelated';
+					wrapper.appendChild(thumb);
+
+					const label = document.createElement('p');
+					label.textContent = pName;
+					wrapper.appendChild(label);
+
+					const cb = document.createElement('input');
+					cb.type = 'checkbox';
+					cb.onchange = e => {
+						e.target.checked ? selectedPals.add(pName) : selectedPals.delete(pName);
+						updatePalOut();
+					};
+					wrapper.appendChild(cb);
+
+					$('preview').appendChild(wrapper);
+
+					// const thumb = new Image()
+					// thumb.src = url
+					// thumb.onclick = () => {
+					// 	document
+					// 		.querySelectorAll('.preview-grid img.enlarged')
+					// 		.forEach(el => el !== thumb && el.classList.remove('enlarged'));
+					// 	thumb.classList.toggle('enlarged');
+					// };
+					// thumb.style.imageRendering = 'pixelated'
+					// $('preview').appendChild(thumb)
 				}
 			}
 

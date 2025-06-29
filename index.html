@@ -255,7 +255,7 @@
 	</div>	
 
 	<h1>Petz Paletteiare</h1>
-	<h2>v1.0</h2>
+	<h2>v1.3</h2>
 	<p>A handy web app for swapping palettes in bulk!</p>
 	<p>- Kathleen @ <a href="https://www.tabbloza.com/petz">Tabbloza</a></p>
 
@@ -295,7 +295,7 @@
 		</div>
 		<div class="widget-section">
 			<h3 id="header-options">Options</h3>
-			<div id=""></div>
+			<select id="sortOption"></select>
 
 			<h3 id="header-list">List</h3>
 			<p>See the list of palettes selected below:</p>
@@ -575,7 +575,6 @@
 		let loadedPalettes = { "__default__": defaultPalette };
 		let currentBasePalette = defaultPalette;
 
-
 		const selectedPals = new Set();
 
 		function updatePalOut() {
@@ -664,15 +663,15 @@
 			pal.forEach((rgb, i) => {
 				const swatch = document.createElement('div');
 				swatch.style = `
-		width: 20px; height: 20px;
-		background: rgb(${rgb.join(',')});
-		border: 1px solid #333;
-		margin: 1px;
-		font-size: 0.5em;
-		color: #fff;
-		text-align: center;
-		line-height: 20px;
-	`;
+					width: 20px; height: 20px;
+					background: rgb(${rgb.join(',')});
+					border: 1px solid #333;
+					margin: 1px;
+					font-size: 0.5em;
+					color: #fff;
+					text-align: center;
+					line-height: 20px;
+				`;
 				swatch.textContent = i;
 				container.appendChild(swatch);
 			});
@@ -718,6 +717,148 @@
 			return cv;
 		}
 
+		function renderPreviewsSorted() {
+			const raw = $('sortOption').value.replace(/ /g, '').toLowerCase();
+			const key = metricKey[raw];
+			const items = [...cachedPreviews];
+
+			if (key) {
+				items.sort((a, b) => a.metrics[key] - b.metrics[key]);
+			} else {
+				items.sort((a, b) => a.pName.localeCompare(b.pName));
+			}
+
+			const container = $('preview');
+			container.innerHTML = '';
+			items.forEach(({ wrapper }) => container.appendChild(wrapper));
+		}
+
+		const sortSelect = document.getElementById('sortOption');
+		['alphabetical', 'mean hue', 'median hue', 'dominant hue', 'dark to light', 'muted to vivid', 'warm to cool'].forEach(option => {
+			const o = document.createElement('option');
+			o.value = option;
+			o.textContent = option;
+			sortSelect.appendChild(o);
+		});
+		sortSelect.value = 'alphabetical';
+
+		const paletteMetrics = {};
+
+		const metricKey = {
+			alphabetical: null,
+			meanhue: 'meanHue',
+			medianhue: 'medianHue',
+			dominanthue: 'dominantHue',
+			darktolight: 'meanVal',
+			mutedtovivid: 'meanSat',
+			warmtocool: 'warmness'
+		};
+
+		function computeMetrics(name, pal) {
+			const hues = [], sats = [], vals = [];
+
+			for (const [r, g, b] of pal) {
+				const [h, s, v] = rgbToHsv(r, g, b);
+				if (!isNaN(h)) hues.push(h);
+				sats.push(s);
+				vals.push(v);
+			}
+
+			const hueCounts = hues.reduce((acc, h) => {
+				const k = Math.round(h);
+				acc[k] = (acc[k] || 0) + 1;
+				return acc;
+			}, {});
+			const dominantHue = +Object.entries(hueCounts)
+				.sort((a, b) => b[1] - a[1])[0][0] || 0;
+
+			paletteMetrics[name] = {
+				meanHue: avg(hues),
+				medianHue: median(hues),
+				dominantHue,
+				meanSat: avg(sats),
+				meanVal: avg(vals),
+				warmness: avg(hues.map(h => (h < 180 ? h : 360 - h)))
+			};
+		}
+
+		function makePreviewMetrics(canvas, pal) {
+			const ctx = canvas.getContext('2d');
+			const { data } = ctx.getImageData(0, 0, canvas.width, canvas.height);
+
+			const hues = [], sats = [], vals = [];
+
+			for (let i = 0; i < data.length; i += 4) {
+				const a = data[i + 3];
+				if (a === 0) continue; // skip transparent pixels
+
+				const r = data[i], g = data[i + 1], b = data[i + 2];
+				const [h, s, v] = rgbToHsv(r, g, b);
+				if (!isNaN(h)) hues.push(h);
+				sats.push(s);
+				vals.push(v);
+			}
+
+			const hueCounts = hues.reduce((acc, h) => {
+				const key = Math.round(h);
+				acc[key] = (acc[key] || 0) + 1;
+				return acc;
+			}, {});
+			const dominantHue = +Object.entries(hueCounts).sort((a, b) => b[1] - a[1])[0][0];
+
+			return {
+				meanHue: avg(hues),
+				medianHue: median(hues),
+				dominantHue,
+				meanSat: avg(sats),
+				meanVal: avg(vals),
+				warmness: avg(hues.map(h => h < 180 ? h : 360 - h))
+			};
+		}
+
+		function rgbToHsv(r, g, b) {
+			r /= 255; g /= 255; b /= 255;
+			const max = Math.max(r, g, b), min = Math.min(r, g, b);
+			const v = max;
+			const d = max - min;
+			const s = max === 0 ? 0 : d / max;
+			let h = 0;
+			if (d !== 0) {
+				switch (max) {
+					case r: h = ((g - b) / d + (g < b ? 6 : 0)); break;
+					case g: h = ((b - r) / d + 2); break;
+					case b: h = ((r - g) / d + 4); break;
+				}
+				h *= 60;
+			}
+			return [h, s, v];
+		}
+
+		function avg(arr) { return arr.reduce((a, b) => a + b, 0) / arr.length; }
+
+		function median(arr) {
+			const s = [...arr].sort((a, b) => a - b);
+			const mid = Math.floor(s.length / 2);
+			return s.length % 2 ? s[mid] : (s[mid - 1] + s[mid]) / 2;
+		}
+
+		$('palDir').addEventListener('change', async () => {
+			const pals = $('palDir').files;
+			loadedPalettes = { '__default__': defaultPalette };
+			paletteMetrics['__default__'] = { meanHue: 0, medianHue: 0, dominantHue: 0, meanSat: 0, meanVal: 0, warmness: 0 };
+			for (const f of pals) {
+				const name = f.name.replace(/\.[^.]+$/, '');
+				const parsed = await parsePaletteFile(f);
+				if (parsed.length === 256) {
+					loadedPalettes[name] = parsed;
+					computeMetrics(name, parsed);
+				}
+			}
+			updatePaletteDropdown();
+		});
+
+		let cachedPreviews = [];
+
 		$('run').onclick = async () => {
 			const imgs = $('imgDir').files
 			// const pals = $('palDir').files
@@ -730,17 +871,28 @@
 				alert('Load at least one palette first!');
 				return;
 			}
+
+			const sortKey = $('sortOption').value.replace(/ /g, '');
+			const palNames = Object.keys(loadedPalettes)
+				.filter(p => p !== '__default__')
+				.sort((a, b) => paletteMetrics[a][sortKey] - paletteMetrics[b][sortKey]);
+
 			// const basePal = await parsePaletteFile(baseFile)
 			// if (basePal.length !== 256) { alert('Base palette must have 256 colours'); return }
 
 			// const palMap = {}
 			// for (const f of pals) palMap[f.name.replace(/\.[^.]+$/, '')] = await parsePaletteFile(f)
+
 			const palMap = loadedPalettes;
+
+			cachedPreviews = [];
 
 			for (const imgF of imgs) {
 				const img = await readImg(imgF)
 				const indexed = indexImage(img, currentBasePalette)
-				for (const [pName, pal] of Object.entries(palMap)) {
+				for (const pName of palNames) {
+					const pal = palMap[pName];
+				// for (const [pName, pal] of Object.entries(palMap)) {
 					if (pName === '__default__') continue;
 					if (pal.length !== 256) continue
 					const cv = drawIndexed(indexed, pal)
@@ -778,20 +930,13 @@
 					};
 					wrapper.appendChild(cb);
 
-					$('preview').appendChild(wrapper);
-
-					// const thumb = new Image()
-					// thumb.src = url
-					// thumb.onclick = () => {
-					// 	document
-					// 		.querySelectorAll('.preview-grid img.enlarged')
-					// 		.forEach(el => el !== thumb && el.classList.remove('enlarged'));
-					// 	thumb.classList.toggle('enlarged');
-					// };
-					// thumb.style.imageRendering = 'pixelated'
-					// $('preview').appendChild(thumb)
+					// $('preview').appendChild(wrapper);
+					const metrics = makePreviewMetrics(cv, pal);
+					cachedPreviews.push({ pName, wrapper, metrics });
 				}
 			}
+
+			renderPreviewsSorted();
 
 			$('downloadAll').style.display = 'inline-block';
 		};
@@ -800,19 +945,7 @@
 				document.querySelectorAll('#links a.dl').forEach(a => a.click());
 			};
 
-		$('palDir').addEventListener('change', async () => {
-			const pals = $('palDir').files;
-			for (const k in loadedPalettes) {
-				if (k !== "__default__") delete loadedPalettes[k];
-			}
-			for (const f of pals) {
-				const name = f.name.replace(/\.[^.]+$/, '');
-				const parsed = await parsePaletteFile(f);
-				if (parsed.length === 256) loadedPalettes[name] = parsed;
-			}
-			updatePaletteDropdown();
-		});
-
+		$('sortOption').onchange = renderPreviewsSorted;
 	</script>
 </body>
 

@@ -5,9 +5,11 @@ Load the [live demo](https://tabbzi.github.io/petz-paintballz-gun/) here!
 
 ## To-Do
 
-- [ ]  bulk palette export in format needed for LnzLive
-- [ ]  PAL and ACT palette export for image programs
-- [ ]  pick and chose palettes to include in a `[Palettes]` variation set
+- [ ]  bulk palette export in PNG color ramp format needed for LnzLive
+- [ ]  bulk PAL and ACT palette export for image programs
+- [ ]  sort images by color profile
+- [x]  checkbox select palettes from previews to include in a list (helpful for `[Palettes]` variation sets)
+- [x]  preview palettes and select base palette
 
 ## License
 

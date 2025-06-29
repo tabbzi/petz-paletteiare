@@ -283,7 +283,9 @@
 					<h3 id="header-palettes">Palettes</h3>
 					<div id="paletteSwatches" style="display:flex;flex-wrap:wrap;margin-top:0.5em;"></div>
 				</div>
+				<button onclick="downloadCurrentPaletteSwatch()">Download Palette PNG</button>
 				<button onclick="toggleViewer()">Toggle Palette Viewer</button>
+				<p>The palette PNG can be loaded into <a href="https://github.com/tabbzi/LnzLive">LnzLive</a> visual hex editor to enable using that palette!</p>
 			</div>			
 
 			<!-- <div class="input-wrapper">
@@ -715,6 +717,34 @@
 			}
 			cx.putImageData(id, 0, 0);
 			return cv;
+		}
+
+		function downloadCurrentPaletteSwatch() {
+			const name = $('paletteSelect').value;
+			const pal = loadedPalettes[name];
+			if (!pal || pal.length !== 256) return;
+
+			const canvas = document.createElement('canvas');
+			canvas.width = 256;
+			canvas.height = 1;
+			const ctx = canvas.getContext('2d');
+			const imgData = ctx.createImageData(256, 1);
+			for (let i = 0; i < 256; i++) {
+				const [r, g, b] = pal[i];
+				const o = i * 4;
+				imgData.data[o] = r;
+				imgData.data[o + 1] = g;
+				imgData.data[o + 2] = b;
+				imgData.data[o + 3] = 255;
+			}
+			ctx.putImageData(imgData, 0, 0);
+
+			canvas.toBlob(blob => {
+				const a = document.createElement('a');
+				a.href = URL.createObjectURL(blob);
+				a.download = `${name}.png`;
+				a.click();
+			});
 		}
 
 		function renderPreviewsSorted() {

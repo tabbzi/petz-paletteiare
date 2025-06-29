@@ -7,7 +7,7 @@ Load the [live demo](https://tabbzi.github.io/petz-paintballz-gun/) here!
 
 - [ ]  bulk palette export in PNG color ramp format needed for LnzLive
 - [ ]  bulk PAL and ACT palette export for image programs
-- [ ]  sort images by color profile
+- [x]  sort paletted images by color metrics (cool to warm, light to dark, sat to desat)
 - [x]  checkbox select palettes from previews to include in a list (helpful for `[Palettes]` variation sets)
 - [x]  preview palettes and select base palette
 

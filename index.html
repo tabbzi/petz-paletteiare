@@ -214,6 +214,20 @@
 		.preview-item { text-align:center; max-width:110px; }
 		.preview-item p { margin:0.2em 0 0; font-size:0.6em; }
 
+		.preview-group h4 {
+			cursor: pointer;
+			background-color: #0e9c89;
+			padding: 0.5em;
+			margin: 1em 0 0.5em;
+			border-radius: 6px;
+			color: #fff;
+			text-shadow: 1px 1px 2px #000;
+			font-size: 0.8em;
+		}
+		.preview-group h4:hover {
+			background-color: #00bfa5;
+		}
+		
 		#sidebar {
 			position: fixed;
 			bottom: 20px;
@@ -284,6 +298,7 @@
 					<div id="paletteSwatches" style="display:flex;flex-wrap:wrap;margin-top:0.5em;"></div>
 				</div>
 				<button onclick="downloadCurrentPaletteSwatch()">Download Palette PNG</button>
+				<button onclick="downloadAllPaletteSwatches()">Download All Palette PNGs</button>
 				<button onclick="toggleViewer()">Toggle Palette Viewer</button>
 				<p>The palette PNG can be loaded into <a href="https://github.com/tabbzi/LnzLive">LnzLive</a> visual hex editor to enable using that palette!</p>
 			</div>			
@@ -747,20 +762,72 @@
 			});
 		}
 
-		function renderPreviewsSorted() {
-			const raw = $('sortOption').value.replace(/ /g, '').toLowerCase();
-			const key = metricKey[raw];
-			const items = [...cachedPreviews];
+		async function downloadAllPaletteSwatches() {
+			for (const [name, pal] of Object.entries(loadedPalettes)) {
+				if (name === '__default__' || !pal || pal.length !== 256) continue;
 
-			if (key) {
-				items.sort((a, b) => a.metrics[key] - b.metrics[key]);
-			} else {
-				items.sort((a, b) => a.pName.localeCompare(b.pName));
+				const canvas = document.createElement('canvas');
+				canvas.width = 256;
+				canvas.height = 1;
+				const ctx = canvas.getContext('2d');
+				const imgData = ctx.createImageData(256, 1);
+				for (let i = 0; i < 256; i++) {
+					const [r, g, b] = pal[i];
+					const o = i * 4;
+					imgData.data[o] = r;
+					imgData.data[o + 1] = g;
+					imgData.data[o + 2] = b;
+					imgData.data[o + 3] = 255;
+				}
+				ctx.putImageData(imgData, 0, 0);
+
+				const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+
+				const a = document.createElement('a');
+				a.href = URL.createObjectURL(blob);
+				a.download = `${name}.png`;
+				a.click();
+				await sleep(150); // Wait 150ms before starting the next download
 			}
+		}
 
+		let cachedImageGroups = {};
+
+		function renderAllGroups() {
 			const container = $('preview');
 			container.innerHTML = '';
-			items.forEach(({ wrapper }) => container.appendChild(wrapper));
+
+			const raw = $('sortOption').value.replace(/ /g, '').toLowerCase();
+			const key = metricKey[raw];
+
+			for (const [imageName, previews] of Object.entries(cachedImageGroups)) {
+				const groupDiv = document.createElement('div');
+				groupDiv.className = 'preview-group';
+
+				const header = document.createElement('h4');
+				header.textContent = `▾ Previews for: ${imageName}`;
+
+				const gridDiv = document.createElement('div');
+				gridDiv.className = 'preview-grid';
+
+				header.onclick = () => {
+					const isHidden = gridDiv.style.display === 'none';
+					gridDiv.style.display = isHidden ? 'flex' : 'none';
+					header.textContent = `${isHidden ? '▾' : '▸'} Previews for: ${imageName}`;
+				};
+
+				if (key) {
+					previews.sort((a, b) => a.metrics[key] - b.metrics[key]);
+				} else {
+					previews.sort((a, b) => a.pName.localeCompare(b.pName));
+				}
+
+				previews.forEach(({ wrapper }) => gridDiv.appendChild(wrapper));
+
+				groupDiv.appendChild(header);
+				groupDiv.appendChild(gridDiv);
+				container.appendChild(groupDiv);
+			}
 		}
 
 		const sortSelect = document.getElementById('sortOption');
@@ -887,55 +954,45 @@
 			updatePaletteDropdown();
 		});
 
-		let cachedPreviews = [];
-
 		$('run').onclick = async () => {
 			const imgs = $('imgDir').files
-			// const pals = $('palDir').files
-			// const baseFile = $('basePal').files[0]
 			$('links').innerHTML = ''
 			$('preview').innerHTML = ''
-			// if (!imgs.length || !baseFile || !pals.length) return
 			if (!imgs.length) { alert('No PNG images selected'); return; }
 			if (Object.keys(loadedPalettes).length === 1) {         // only "__default__"
 				alert('Load at least one palette first!');
 				return;
 			}
 
-			const sortKey = $('sortOption').value.replace(/ /g, '');
-			const palNames = Object.keys(loadedPalettes)
-				.filter(p => p !== '__default__')
-				.sort((a, b) => paletteMetrics[a][sortKey] - paletteMetrics[b][sortKey]);
-
-			// const basePal = await parsePaletteFile(baseFile)
-			// if (basePal.length !== 256) { alert('Base palette must have 256 colours'); return }
-
-			// const palMap = {}
-			// for (const f of pals) palMap[f.name.replace(/\.[^.]+$/, '')] = await parsePaletteFile(f)
-
+			const palNames = Object.keys(loadedPalettes).filter(p => p !== '__default__');
 			const palMap = loadedPalettes;
 
-			cachedPreviews = [];
+			cachedImageGroups = {};
 
 			for (const imgF of imgs) {
+				const imageName = imgF.name;
+				cachedImageGroups[imageName] = [];
+
 				const img = await readImg(imgF)
 				const indexed = indexImage(img, currentBasePalette)
+
 				for (const pName of palNames) {
-					const pal = palMap[pName];
-				// for (const [pName, pal] of Object.entries(palMap)) {
 					if (pName === '__default__') continue;
+					const pal = palMap[pName];
 					if (pal.length !== 256) continue
+
 					const cv = drawIndexed(indexed, pal)
 					const blob = await new Promise(r => cv.toBlob(r, 'image/png'))
 					const url = URL.createObjectURL(blob)
+
 					const a = document.createElement('a')
 					a.href = url
 					a.download = `${pName}_${imgF.name}`
 					a.textContent = a.download
 					a.className = 'dl'
 					$('links').appendChild(a)
-					const wrapper = document.createElement('div');
 
+					const wrapper = document.createElement('div');
 					wrapper.className = 'preview-item';
 
 					const thumb = new Image();
@@ -960,22 +1017,19 @@
 					};
 					wrapper.appendChild(cb);
 
-					// $('preview').appendChild(wrapper);
 					const metrics = makePreviewMetrics(cv, pal);
-					cachedPreviews.push({ pName, wrapper, metrics });
+					cachedImageGroups[imageName].push({ pName, wrapper, metrics });
 				}
 			}
-
-			renderPreviewsSorted();
-
+			renderAllGroups();
 			$('downloadAll').style.display = 'inline-block';
 		};
 
 		$('downloadAll').onclick = () => {
-				document.querySelectorAll('#links a.dl').forEach(a => a.click());
-			};
+			document.querySelectorAll('#links a.dl').forEach(a => a.click());
+		};
 
-		$('sortOption').onchange = renderPreviewsSorted;
+		$('sortOption').onchange = renderAllGroups;
 	</script>
 </body>
 

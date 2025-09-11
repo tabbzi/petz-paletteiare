@@ -1,7 +1,7 @@
 # petz-paletteaire
 Swap indexed color palettes for petzy purposes
 
-Load the [live demo](https://tabbzi.github.io/petz-paintballz-gun/) here!
+Load the [live demo](https://tabbzi.github.io/petz-paletteiare/) here!
 
 ## To-Do
 

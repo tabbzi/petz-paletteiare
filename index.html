@@ -330,6 +330,8 @@
 	<script>
 		const $ = id => document.getElementById(id);
 
+		const sleep = ms => new Promise(r => setTimeout(r, ms));
+
 		const defaultPalette = [
 				[255, 255, 255],
 				[128, 0, 0],

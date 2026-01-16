@@ -9,8 +9,8 @@
 	<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Roboto+Mono:wght@400&display=swap" rel="stylesheet">
 	<style>
 		:root {
-			--primary: #00bfa5;
-			--primary-hover: #1de9b6;
+			--primary: #0e9c89;
+			--primary-hover: #00bfa5;
 			--bg-dark: #1a1a1a;
 			--bg-darker: #111;
 			--border: #444;
@@ -74,7 +74,7 @@
 		}
 
 		a:hover {
-			color: #1de9b6;
+			color: #00bfa5;
 			text-decoration: underline;
 		}
 
@@ -348,13 +348,13 @@
 			display: block;
 			margin: 0.4em 0;
 			font-size: 0.65em;
-			color: #0e9c89;
+			color: #00bfa5;
 			text-decoration: none;
 			font-family: 'Press Start 2P', monospace;
 		}
 
 		#sidebar a:hover {
-			color: #1de9b6;
+			color: #00bfa5;
 			text-decoration: underline;
 		}
 
@@ -393,11 +393,12 @@
 
 	<div id="sidebar">
 		<a href="#header-palettes">Viewer & Editor</a>
-		<a href="#header-arrays">Palette Code</a>
+		<a href="#header-color-swap">Color Swap</a>
+		<!-- <a href="#header-arrays">Palette Code</a> -->
+		<a href="#header-dither-match">Dither & Match</a>
 		<a href="#header-ramp-rand">Ramper & Randomizer</a>
 		<a href="#header-import-colors">Color Importer</a>
-		<a href="#header-dither-match">Dither & Match</a>
-		<a href="#header-color-swap">Color Swap</a>
+		
 	</div>
 
 	<div class="container">
@@ -409,7 +410,7 @@
 		</p>
 
 		<!-- PALETTE VIEWER & EDITOR -->
-		<div class="card" id="bulk">
+		<div class="card" id="header-palettes">
 			<h3>Viewer & Editor</h3>
 			<p class="instr">Load, view, edit, and generate palettes! Click colors to select for batch effects.
 				Double-click to edit colors manually.</p>
@@ -458,7 +459,7 @@
 					</p>
 					<input type="file" id="palDir" webkitdirectory directory multiple class="hidden">
 					<button onclick="$('palDir').click()"
-						style="width:100%; font-size: 14px; height: 60px; border: 2px dashed #444;">Choose Palette
+						style="width:100%; font-size: 14px; height: 60px;">Choose Palette
 						Folder</button>
 
 					<div id="palSummary" class="note" style="margin-top: 10px; font-size: 10px;"></div>
@@ -501,34 +502,132 @@
 						</div>
 					</div>
 
-					<div class="effect-shelf" style="margin-top: 15px; border: 1px solid var(--primary);">
-						<p class="note" style="font-size: 10px; margin-bottom: 5px;">Shade Light-to-Dark</p>
-						<div class="flex-row" style="align-items: center; gap: 10px;">
+					<div class="effect-shelf" style="margin-top: 15px; padding-top: 10px; border-top: 1px solid #444;">
+						<p class="note" style="font-size: 10px; margin-bottom: 8px; color: var(--primary);">Shade Light-to-Dark</p>
+						<div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+					
 							<div style="display:flex; gap:5px; align-items:center;">
-								<label class="note" style="font-size:8px;">LIGHT</label>
-								<input type="color" id="reimposeLight" value="#ffffff"
-									style="width:30px; height:30px; padding:0; border:none;">
+								<div id="reimposeStartPreview" class="color-trigger" style="background:#ffffff"
+									onclick="triggerGlobalPicker(event, 'reimposeStart')"></div>
+								<div id="reimposeEndPreview" class="color-trigger" style="background:#000000"
+									onclick="triggerGlobalPicker(event, 'reimposeEnd')"></div>
 							</div>
-							<div style="display:flex; gap:5px; align-items:center;">
-								<label class="note" style="font-size:8px;">DARK</label>
-								<input type="color" id="reimposeDark" value="#000000"
-									style="width:30px; height:30px; padding:0; border:none;">
-							</div>
-							<div style="flex: 1;">
+					
+							<div style="flex: 1; min-width: 100px;">
 								<span class="note" style="font-size: 9px;">Strength: <span id="reimposeVal">50</span>%</span>
 								<input type="range" id="reimposeStrength" min="1" max="100" value="50"
 									oninput="$('reimposeVal').textContent=this.value" style="width: 100%;">
 							</div>
+					
 							<button onclick="reimposeRamp()"
-								style="margin: 0; padding: 5px 10px;">Shade Light-to-Dark</button>
+								style="margin: 0; padding: 4px 8px; font-size: 9px;">Apply to Selected</button>
 						</div>
 					</div>
 				</div>
 			</div>
 		</div>
 
+		<!-- COLOR SWAP -->
+		<div class="card" id="header-color-swap">
+			<h3>Color Swap</h3>
+			<p class="instr">Queue a folder of pix PNGs and apply all loaded palettes. <b>Note:</b> Images will queue
+				for color swap and you will have option to download all upon completion.</p>
+		
+			<div class="flex-row" style="margin-bottom: 20px;">
+				<div class="flex-1">
+					<input type="file" id="imgDir" webkitdirectory directory multiple accept=".png" class="hidden">
+					<button onclick="$('imgDir').click()"
+						style="width:100%; font-size: 14px; height: 60px;">Choose PNG
+						Folder</button>
+					<div id="inputImgThumbs" class="input-thumbs hidden"></div>
+				</div>
+				<div class="flex-1" style="display:flex; flex-direction:column; justify-content: flex-end;">
+					<button id="run" style="width:100%; font-size: 14px; height: 60px;">Color
+						Swap</button>
+				</div>
+			</div>
+		
+			<p><strong>Make sure that current working palette in <a href="#header-palettes">Viewer & Editor</a> matches palette
+					used in pix
+					PNGs!</strong> To swap palettes on your images, you need to specify which palette is used by those
+				images. For
+				example, if your game has "reshade" as the default palette, then your petz pix will be paletted and you
+				need to
+				provide "reshade.bmp" in your palette folder and select it. The default Petz palette is built-in! Color
+				Swap does
+				not work well in pix that contain multiple petz using different palettes.</p>
+		
+			<div class="flex-row"
+				style="margin-bottom: 15px; align-items: flex-end; border-top: 1px solid #444; padding-top: 15px;">
+				<div style="flex: 1;">
+					<label>Sort Results By:</label>
+					<select id="sortOption" onchange="renderGroups()">
+						<option value="alphabetical">Alphabetical</option>
+						<option value="meanhue">Mean Hue</option>
+						<option value="medianhue">Median Hue</option>
+						<option value="darktolight">Dark to Light</option>
+						<option value="mutedtovivid">Muted to Vivid</option>
+						<option value="warmtocool">Warm to Cool</option>
+					</select>
+				</div>
+				<button id="downloadAll" onclick="downloadAllGenerated()"
+					style="display:none; background: #4caf50; color:#fff;">Download All
+					Swaps</button>
+			</div>
+		
+			<div id="selectionList" style="margin-bottom: 20px;">
+				<label>Selection List:</label>
+				<textarea id="palOut" rows="4" placeholder="Favorite palettes will list here..."></textarea>
+			</div>
+		
+			<div id="previewContainer"></div>
+			<div id="links" class="hidden"></div>
+		</div>
+
+		<!-- DITHER & MATCH -->
+		<div class="flex-row">
+			<div class="card flex-1" id="header-dither-match">
+				<h3>Dither Colors</h3>
+				<p class="instr">Generate dither textures using two indices from your palette. Especially useful when
+					hexing in the base game palette or other color-limited palettes!</p>
+				<div class="flex-row" style="align-items: center;">
+					<div style="flex:1">
+						<label>Index 1 / 2</label>
+						<div style="display:flex; gap:5px;">
+							<input type="number" id="ditherIdx1" value="10" min="0" max="255" onchange="renderDitherPreview()">
+							<input type="number" id="ditherIdx2" value="19" min="0" max="255" onchange="renderDitherPreview()">
+						</div>
+						<label style="margin-top:10px">Pattern</label>
+						<select id="ditherPattern" onchange="renderDitherPreview()">
+							<option value="checker">Checkerboard</option>
+							<option value="v-stripes">Vertical</option>
+							<option value="h-stripes">Horizontal</option>
+						</select>
+					</div>
+					<div style="text-align: center;">
+						<canvas id="ditherCanvas" width="32" height="32" class="canvas-preview"
+							style="width:96px; height:96px;"></canvas>
+						<button onclick="downloadDitherBmp()" style="font-size:8px;">Save BMP</button>
+					</div>
+				</div>
+			</div>
+
+			<div class="card flex-1" id="match">
+				<h3>Match Colors</h3>
+				<p class="instr">Find the palette index (or dithered pair) that best matches an external color.</p>
+				<label>Pick Target Color:</label>
+				<div style="display:flex; align-items:center; gap:10px;">
+					<input type="color" id="targetColor" value="#ff0000" style="height:45px;">
+					<button onclick="findMatch()" style="flex: 1; margin: 0;">Find Closest</button>
+				</div>
+				<div id="matchOutput" class="note"
+					style="margin-top: 15px; background: var(--bg-darker); padding: 10px; border-radius: 4px; font-size: 11px;">
+					Matches will appear here...
+				</div>
+			</div>
+		</div>
 		<!-- PALETTE ARRAYS -->
-		<!-- <div class="card" id="code-export">
+		<!-- <div class="card" id="header-arrays">
             <h3>Palette Array</h3>
             <p class="instr">Copy the following JavaScript array code for this palette.</p>
             <textarea id="paletteCodeBox" rows="8" readonly onclick="this.select()" style="cursor: text;"></textarea>
@@ -539,7 +638,7 @@
         </div> -->
 
 		<!-- RAMPER & RANDOMIZER -->
-		<div class="card" id="lab">
+		<div class="card" id="header-ramp-rand">
 			<h3>Ramper & Randomizer</h3>
 			<p class="instr">Randomize color ramps. Set and toggle anchor colors for ramps. Checkboxes mark which ramps
 				to update. Use column headers to set all anchor colors or clear columns.</p>
@@ -616,7 +715,7 @@
 		</div>
 
 		<!-- COLOR IMPORTER -->
-		<div class="card" id="seeds">
+		<div class="card" id="header-import-colors">
 			<h3>Color Importer</h3>
 			<p class="instr">Extract colors from <strong>ACT</strong>, <strong>PAL</strong>, or <strong><a
 						href="https://chromora.com/">Chromora</a> JSON</strong> palette files. These can be distributed
@@ -636,108 +735,6 @@
 						disabled>Populate Ramper</button>
 				</div>
 			</div>
-		</div>
-
-		<!-- DITHER & MATCH -->
-		<div class="flex-row">
-			<div class="card flex-1" id="dither">
-				<h3>Dither Colors</h3>
-				<p class="instr">Generate dither textures using two indices from your palette. Especially useful when
-					hexing in the base game palette or other color-limited palettes!</p>
-				<div class="flex-row" style="align-items: center;">
-					<div style="flex:1">
-						<label>Index 1 / 2</label>
-						<div style="display:flex; gap:5px;">
-							<input type="number" id="ditherIdx1" value="10" min="0" max="255"
-								onchange="renderDitherPreview()">
-							<input type="number" id="ditherIdx2" value="19" min="0" max="255"
-								onchange="renderDitherPreview()">
-						</div>
-						<label style="margin-top:10px">Pattern</label>
-						<select id="ditherPattern" onchange="renderDitherPreview()">
-							<option value="checker">Checkerboard</option>
-							<option value="v-stripes">Vertical</option>
-							<option value="h-stripes">Horizontal</option>
-						</select>
-					</div>
-					<div style="text-align: center;">
-						<canvas id="ditherCanvas" width="32" height="32" class="canvas-preview"
-							style="width:96px; height:96px;"></canvas>
-						<button onclick="downloadDitherBmp()" style="font-size:8px;">Save BMP</button>
-					</div>
-				</div>
-			</div>
-
-			<div class="card flex-1" id="match">
-				<h3>Match Colors</h3>
-				<p class="instr">Find the palette index (or dithered pair) that best matches an external color.</p>
-				<label>Pick Target Color:</label>
-				<div style="display:flex; align-items:center; gap:10px;">
-					<input type="color" id="targetColor" value="#ff0000" style="height:45px;">
-					<button onclick="findMatch()" style="flex: 1; margin: 0;">Find Closest</button>
-				</div>
-				<div id="matchOutput" class="note"
-					style="margin-top: 15px; background: var(--bg-darker); padding: 10px; border-radius: 4px; font-size: 11px;">
-					Matches will appear here...
-				</div>
-			</div>
-		</div>
-
-		<!-- COLOR SWAP -->
-		<div class="card" id="results">
-			<h3>Color Swap</h3>
-			<p class="instr">Queue a folder of pix PNGs and apply all loaded palettes. <b>Note:</b> Images will queue
-				for color swap and you will have option to download all upon completion.</p>
-
-			<div class="flex-row" style="margin-bottom: 20px;">
-				<div class="flex-1">
-					<input type="file" id="imgDir" webkitdirectory directory multiple accept=".png" class="hidden">
-					<button onclick="$('imgDir').click()"
-						style="width:100%; font-size: 14px; height: 60px; border: 2px dashed #444;">Choose PNG
-						Folder</button>
-					<div id="inputImgThumbs" class="input-thumbs hidden"></div>
-				</div>
-				<div class="flex-1" style="display:flex; flex-direction:column; justify-content: flex-end;">
-					<button id="run" style="width:100%; font-size: 14px; height: 60px; border: 2px dashed #444;">Color
-						Swap</button>
-				</div>
-			</div>
-
-			<p><strong>Make sure that current working palette in <a href="#header-palettes">Viewer & Editor</a> matches palette
-					used in pix
-					PNGs!</strong> To swap palettes on your images, you need to specify which palette is used by those
-				images. For
-				example, if your game has "reshade" as the default palette, then your petz pix will be paletted and you
-				need to
-				provide "reshade.bmp" in your palette folder and select it. The default Petz palette is built-in! Color
-				Swap does
-				not work well in pix that contain multiple petz using different palettes.</p>
-
-			<div class="flex-row"
-				style="margin-bottom: 15px; align-items: flex-end; border-top: 1px solid #444; padding-top: 15px;">
-				<div style="flex: 1;">
-					<label>Sort Results By:</label>
-					<select id="sortOption" onchange="renderGroups()">
-						<option value="alphabetical">Alphabetical</option>
-						<option value="meanhue">Mean Hue</option>
-						<option value="medianhue">Median Hue</option>
-						<option value="darktolight">Dark to Light</option>
-						<option value="mutedtovivid">Muted to Vivid</option>
-						<option value="warmtocool">Warm to Cool</option>
-					</select>
-				</div>
-				<button id="downloadAll" onclick="downloadAllGenerated()"
-					style="display:none; background: #4caf50; color:#fff;">Download All
-					Swaps</button>
-			</div>
-
-			<div id="selectionList" style="margin-bottom: 20px;">
-				<label>Selection List:</label>
-				<textarea id="palOut" rows="4" placeholder="Favorite palettes will list here..."></textarea>
-			</div>
-
-			<div id="previewContainer"></div>
-			<div id="links" class="hidden"></div>
 		</div>
 	</div>
 
@@ -1063,7 +1060,7 @@
 		let selectedIndices = new Set();
 		let currentPickerCallback = null;
 		let seedColors = [];
-		let globalPickerColors = { tint: "#00bfa5", masterStart: "#ffffff", masterMid: "#888888", masterEnd: "#000000" };
+		let globalPickerColors = { tint: "#00bfa5", masterStart: "#ffffff", masterMid: "#888888", masterEnd: "#000000", reimposeStart: "#ffffff", reimposeEnd: "#000000" };
 		let originalPalBeforeHue = null;
 
 		// Helpers
@@ -1288,8 +1285,8 @@
 					return alert("Please select at least 2 swatches in the grid first.");
 				}
 
-				const lightCol = hexToRgb($('reimposeLight').value);
-				const darkCol = hexToRgb($('reimposeDark').value);
+				const lightCol = hexToRgb(globalPickerColors.reimposeStart);
+				const darkCol = hexToRgb(globalPickerColors.reimposeEnd);
 				const strength = parseInt($('reimposeStrength').value) / 100;
 
 				targets.forEach((idx, i) => {

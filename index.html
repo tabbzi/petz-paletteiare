@@ -1,484 +1,481 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Petz Paletteiare</title>
-	<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
-	<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Roboto+Mono:wght@400&display=swap" rel="stylesheet">
-	<style>
-		:root {
-			--primary: #0e9c89;
-			--primary-hover: #00bfa5;
-			--bg-dark: #1a1a1a;
-			--bg-darker: #111;
-			--border: #444;
-			--text: #e0e0e0;
-			--accent: #ff9800;
-		}
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Petz Paletteiare</title>
+		<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+		<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Roboto+Mono:wght@400&display=swap" rel="stylesheet">
+		<style>
+			:root {
+				--primary: #0e9c89;
+				--primary-hover: #00bfa5;
+				--bg-dark: #1a1a1a;
+				--bg-darker: #111;
+				--border: #444;
+				--text: #e0e0e0;
+				--accent: #ff9800;
+			}
+			
+			body {
+				font-family: 'Press Start 2P';
+				font-size: 1.0em;
+				background-color: #2f2f2f;
+				color: var(--text);
+				margin: 0;
+				padding: 20px;
+				line-height: 1.6;
+			}
+			
+			.note,
+			p,
+			label,
+			textarea,
+			select,
+			.range-row,
+			input[type="text"],
+			input[type="number"],
+			.instr {
+				font-family: 'Roboto Mono', monospace;
+				color: #e0e0e0;
+			}
+			
+			.instr {
+				font-size: 11px;
+				color: #aaa;
+				margin-bottom: 15px;
+				line-height: 1.4;
+			}
+			
+			h1,
+			h2,
+			h3 {
+				text-align: center;
+				color: #ffffff;
+				text-shadow: 2px 2px 4px #000;
+			}
+			
+			h1 {
+				font-size: 1.5em;
+				margin-bottom: 0.2em;
+			}
+			
+			h2 {
+				font-size: 1.1em;
+				color: var(--primary);
+				margin-bottom: 1.5em;
+			}
+			
+			a:link,
+			a:visited {
+				color: #00bfa5;
+				text-decoration: none;
+			}
+			
+			a:hover {
+				color: #00bfa5;
+				text-decoration: underline;
+			}
+			
+			.container {
+				max-width: 1150px;
+				margin: 0 auto;
+			}
+			
+			.card {
+				background-color: var(--bg-dark);
+				border: 2px solid var(--border);
+				border-radius: 12px;
+				padding: 20px;
+				margin-bottom: 25px;
+				box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+			}
+			
+			.flex-row {
+				display: flex;
+				flex-wrap: wrap;
+				gap: 20px;
+			}
+			
+			.flex-1 {
+				flex: 1;
+				min-width: 320px;
+			}
+			
+			button,
+			.btn {
+				font-family: 'Press Start 2P', monospace;
+				font-size: 10px;
+				padding: 10px 15px;
+				color: #000;
+				background-color: var(--primary);
+				border: none;
+				border-radius: 6px;
+				cursor: pointer;
+				box-shadow: 2px 2px 0 #004d40;
+				transition: all 0.1s;
+				margin: 5px 0;
+			}
+			
+			button:hover,
+			.btn:hover {
+				background-color: var(--primary-hover);
+				transform: translateY(-1px);
+			}
+			
+			input[type="text"],
+			input[type="number"],
+			select,
+			textarea {
+				background: var(--bg-darker);
+				color: #fff;
+				border: 1px solid var(--border);
+				padding: 8px;
+				border-radius: 4px;
+				width: 100%;
+				box-sizing: border-box;
+			}
+			
+			textarea {
+				resize: vertical;
+				font-size: 11px;
+				line-height: 1.2;
+			}
+			
+			.swatch-grid {
+				display: grid;
+				grid-template-columns: repeat(16, 1fr);
+				gap: 2px;
+				margin: 15px 0;
+				background: #000;
+				padding: 2px;
+				border: 1px solid var(--border);
+			}
+			
+			.swatch {
+				aspect-ratio: 1;
+				cursor: pointer;
+				position: relative;
+				font-size: 8px;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				color: rgba(255, 255, 255, 0.3);
+				border: 1px solid #222;
+				image-rendering: pixelated;
+				user-select: none;
+			}
+			
+			.swatch.selected {
+				outline: 2px solid #fff;
+				outline-offset: -2px;
+				box-shadow: inset 0 0 8px #000;
+				z-index: 5;
+			}
+			
+			.swatch:hover::after {
+				content: attr(data-index);
+				position: absolute;
+				background: #000;
+				color: #fff;
+				padding: 2px;
+				z-index: 10;
+				top: -20px;
+				font-family: 'Roboto Mono', monospace;
+			}
+			
+			.color-trigger {
+				width: 30px;
+				height: 30px;
+				border: 1px solid #fff;
+				border-radius: 4px;
+				cursor: pointer;
+				display: inline-block;
+				vertical-align: middle;
+			}
+			
+			#colorPopup {
+				position: fixed;
+				background: #333;
+				border: 2px solid var(--primary);
+				padding: 10px;
+				border-radius: 8px;
+				z-index: 5000;
+				box-shadow: 0 8px 24px rgba(0, 0, 0, 0.8);
+				display: none;
+				width: 180px;
+			}
+			
+			.range-container {
+				max-height: 350px;
+				overflow-y: auto;
+				padding-right: 10px;
+				border: 1px solid var(--border);
+				background: var(--bg-darker);
+				border-radius: 6px;
+				margin-bottom: 15px;
+			}
+			
+			.range-row {
+				display: grid;
+				grid-template-columns: 40px 140px 1fr 1fr 1fr;
+				align-items: center;
+				gap: 10px;
+				padding: 6px 10px;
+				border-bottom: 1px solid #222;
+				font-size: 10px;
+			}
+			
+			.range-label {
+				cursor: pointer;
+				padding: 4px;
+				border-radius: 4px;
+				transition: background 0.1s;
+			}
+			
+			.range-label:hover {
+				background: #333;
+				color: var(--primary);
+			}
+			
+			.anchor-box {
+				display: flex;
+				align-items: center;
+				gap: 5px;
+			}
+			
+			.master-controls {
+				background: #222;
+				padding: 10px;
+				border-radius: 8px;
+				margin-bottom: 15px;
+				display: grid;
+				grid-template-columns: 40px 140px 1fr 1fr 1fr;
+				gap: 10px;
+				align-items: center;
+			}
+			
+			.effect-shelf {
+				background: var(--bg-darker);
+				border: 1px solid var(--border);
+				padding: 10px;
+				border-radius: 8px;
+				margin: 10px 0;
+			}
+			
+			.preview-grid {
+				display: flex;
+				flex-wrap: wrap;
+				gap: 1em;
+				margin-top: 1em;
+			}
+			
+			.preview-item {
+				text-align: center;
+				background: #222;
+				padding: 8px;
+				border-radius: 8px;
+			}
+			
+			.preview-item p {
+				margin: 5px 0;
+				font-size: 10px;
+				word-break: break-all;
+			}
+			
+			.preview-item img {
+				border: 1px solid #444;
+				cursor: zoom-in;
+				display: block;
+				margin: 0 auto;
+			}
+			
+			.preview-item img.enlarged {
+				position: fixed;
+				top: 50%;
+				left: 50%;
+				transform: translate(-50%, -50%) scale(3);
+				max-width: none;
+				max-height: none;
+				width: auto;
+				height: auto;
+				z-index: 2000;
+				box-shadow: 0 0 100px #000;
+				cursor: zoom-out;
+				background: #000;
+				outline: 5px solid var(--primary);
+				image-rendering: pixelated;
+			}
+			
+			.input-thumbs {
+				display: flex;
+				flex-wrap: wrap;
+				gap: 10px;
+				margin-top: 10px;
+				max-height: 120px;
+				overflow-y: auto;
+				background: var(--bg-darker);
+				padding: 10px;
+				border-radius: 6px;
+			}
+			
+			.input-thumbs img {
+				height: 40px;
+				width: auto;
+				image-rendering: pixelated;
+				border: 1px solid var(--border);
+			}
+			
+			#sidebar {
+				position: fixed;
+				bottom: 20px;
+				left: 20px;
+				background-color: #1a1a1a;
+				border: 3px double #00bfa5;
+				border-radius: 16px 16px 16px 16px;
+				padding: 1em 1.2em;
+				z-index: 100;
+				max-width: 180px;
+				text-align: center;
+			}
+			
+			#sidebar a {
+				display: block;
+				margin: 0.4em 0;
+				font-size: 0.65em;
+				color: #00bfa5;
+				text-decoration: none;
+				font-family: 'Press Start 2P', monospace;
+			}
+			
+			#sidebar a:hover {
+				color: #00bfa5;
+				text-decoration: underline;
+			}
+			
+			.hidden {
+				display: none;
+			}
+			
+			.canvas-preview {
+				background: #000;
+				border: 1px solid #555;
+				image-rendering: pixelated;
+				display: block;
+				margin: 10px auto;
+			}
+			
+			.seed-pool {
+				display: flex;
+				flex-wrap: wrap;
+				gap: 4px;
+				background: var(--bg-darker);
+				padding: 8px;
+				min-height: 40px;
+				border-radius: 4px;
+				margin-bottom: 8px;
+			}
+			
+			.seed-swatch {
+				width: 12px;
+				height: 12px;
+				border: 1px solid #fff;
+			}
+		</style>
+	</head>
 
-		body {
-			font-family: 'Press Start 2P';
-			font-size: 1.0em;
-			background-color: #2f2f2f;
-			color: var(--text);
-			margin: 0;
-			padding: 20px;
-			line-height: 1.6;
-		}
-
-		.note,
-		p,
-		label,
-		textarea,
-		select,
-		.range-row,
-		input[type="text"],
-		input[type="number"],
-		.instr {
-			font-family: 'Roboto Mono', monospace;
-			color: #e0e0e0;
-		}
-
-		.instr {
-			font-size: 11px;
-			color: #aaa;
-			margin-bottom: 15px;
-			line-height: 1.4;
-		}
-
-		h1,
-		h2,
-		h3 {
-			text-align: center;
-			color: #ffffff;
-			text-shadow: 2px 2px 4px #000;
-		}
-
-		h1 {
-			font-size: 1.5em;
-			margin-bottom: 0.2em;
-		}
-
-		h2 {
-			font-size: 1.1em;
-			color: var(--primary);
-			margin-bottom: 1.5em;
-		}
-
-		a:link,
-		a:visited {
-			color: #00bfa5;
-			text-decoration: none;
-		}
-
-		a:hover {
-			color: #00bfa5;
-			text-decoration: underline;
-		}
-
-		.container {
-			max-width: 1150px;
-			margin: 0 auto;
-		}
-
-		.card {
-			background-color: var(--bg-dark);
-			border: 2px solid var(--border);
-			border-radius: 12px;
-			padding: 20px;
-			margin-bottom: 25px;
-			box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
-		}
-
-		.flex-row {
-			display: flex;
-			flex-wrap: wrap;
-			gap: 20px;
-		}
-
-		.flex-1 {
-			flex: 1;
-			min-width: 320px;
-		}
-
-		button,
-		.btn {
-			font-family: 'Press Start 2P', monospace;
-			font-size: 10px;
-			padding: 10px 15px;
-			color: #000;
-			background-color: var(--primary);
-			border: none;
-			border-radius: 6px;
-			cursor: pointer;
-			box-shadow: 2px 2px 0 #004d40;
-			transition: all 0.1s;
-			margin: 5px 0;
-		}
-
-		button:hover,
-		.btn:hover {
-			background-color: var(--primary-hover);
-			transform: translateY(-1px);
-		}
-
-		input[type="text"],
-		input[type="number"],
-		select,
-		textarea {
-			background: var(--bg-darker);
-			color: #fff;
-			border: 1px solid var(--border);
-			padding: 8px;
-			border-radius: 4px;
-			width: 100%;
-			box-sizing: border-box;
-		}
-
-		textarea {
-			resize: vertical;
-			font-size: 11px;
-			line-height: 1.2;
-		}
-
-		.swatch-grid {
-			display: grid;
-			grid-template-columns: repeat(16, 1fr);
-			gap: 2px;
-			margin: 15px 0;
-			background: #000;
-			padding: 2px;
-			border: 1px solid var(--border);
-		}
-
-		.swatch {
-			aspect-ratio: 1;
-			cursor: pointer;
-			position: relative;
-			font-size: 8px;
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			color: rgba(255, 255, 255, 0.3);
-			border: 1px solid #222;
-			image-rendering: pixelated;
-			user-select: none;
-		}
-
-		.swatch.selected {
-			outline: 2px solid #fff;
-			outline-offset: -2px;
-			box-shadow: inset 0 0 8px #000;
-			z-index: 5;
-		}
-
-		.swatch:hover::after {
-			content: attr(data-index);
-			position: absolute;
-			background: #000;
-			color: #fff;
-			padding: 2px;
-			z-index: 10;
-			top: -20px;
-			font-family: 'Roboto Mono', monospace;
-		}
-
-		.color-trigger {
-			width: 30px;
-			height: 30px;
-			border: 1px solid #fff;
-			border-radius: 4px;
-			cursor: pointer;
-			display: inline-block;
-			vertical-align: middle;
-		}
-
-		#colorPopup {
-			position: fixed;
-			background: #333;
-			border: 2px solid var(--primary);
-			padding: 10px;
-			border-radius: 8px;
-			z-index: 5000;
-			box-shadow: 0 8px 24px rgba(0, 0, 0, 0.8);
-			display: none;
-			width: 180px;
-		}
-
-		.range-container {
-			max-height: 350px;
-			overflow-y: auto;
-			padding-right: 10px;
-			border: 1px solid var(--border);
-			background: var(--bg-darker);
-			border-radius: 6px;
-			margin-bottom: 15px;
-		}
-
-		.range-row {
-			display: grid;
-			grid-template-columns: 40px 140px 1fr 1fr 1fr;
-			align-items: center;
-			gap: 10px;
-			padding: 6px 10px;
-			border-bottom: 1px solid #222;
-			font-size: 10px;
-		}
-
-		.range-label {
-			cursor: pointer;
-			padding: 4px;
-			border-radius: 4px;
-			transition: background 0.1s;
-		}
-
-		.range-label:hover {
-			background: #333;
-			color: var(--primary);
-		}
-
-		.anchor-box {
-			display: flex;
-			align-items: center;
-			gap: 5px;
-		}
-
-		.master-controls {
-			background: #222;
-			padding: 10px;
-			border-radius: 8px;
-			margin-bottom: 15px;
-			display: grid;
-			grid-template-columns: 40px 140px 1fr 1fr 1fr;
-			gap: 10px;
-			align-items: center;
-		}
-
-		.effect-shelf {
-			background: var(--bg-darker);
-			border: 1px solid var(--border);
-			padding: 10px;
-			border-radius: 8px;
-			margin: 10px 0;
-		}
-
-		.preview-grid {
-			display: flex;
-			flex-wrap: wrap;
-			gap: 1em;
-			margin-top: 1em;
-		}
-
-		.preview-item {
-			text-align: center;
-			max-width: 120px;
-			background: #222;
-			padding: 8px;
-			border-radius: 8px;
-		}
-
-		.preview-item p {
-			margin: 5px 0;
-			font-size: 10px;
-			word-break: break-all;
-		}
-
-		.preview-item img {
-			max-width: 100px;
-			height: auto;
-			image-rendering: pixelated;
-			border: 1px solid #444;
-			cursor: zoom-in;
-			display: block;
-			margin: 0 auto;
-		}
-
-		.preview-item img.enlarged {
-			position: fixed;
-			top: 50%;
-			left: 50%;
-			transform: translate(-50%, -50%) scale(3);
-			max-width: none;
-			max-height: none;
-			width: auto;
-			height: auto;
-			z-index: 2000;
-			box-shadow: 0 0 100px #000;
-			cursor: zoom-out;
-			background: #000;
-			outline: 5px solid var(--primary);
-			image-rendering: pixelated;
-		}
-
-		.input-thumbs {
-			display: flex;
-			flex-wrap: wrap;
-			gap: 10px;
-			margin-top: 10px;
-			max-height: 120px;
-			overflow-y: auto;
-			background: var(--bg-darker);
-			padding: 10px;
-			border-radius: 6px;
-		}
-
-		.input-thumbs img {
-			height: 40px;
-			width: auto;
-			image-rendering: pixelated;
-			border: 1px solid var(--border);
-		}
-
-		#sidebar {
-			position: fixed;
-			bottom: 20px;
-			left: 20px;
-			background-color: #1a1a1a;
-			border: 3px double #00bfa5;
-			border-radius: 16px 16px 16px 16px;
-			padding: 1em 1.2em;
-			z-index: 100;
-			max-width: 180px;
-			text-align: center;
-		}
-
-		#sidebar a {
-			display: block;
-			margin: 0.4em 0;
-			font-size: 0.65em;
-			color: #00bfa5;
-			text-decoration: none;
-			font-family: 'Press Start 2P', monospace;
-		}
-
-		#sidebar a:hover {
-			color: #00bfa5;
-			text-decoration: underline;
-		}
-
-		.hidden {
-			display: none;
-		}
-
-		.canvas-preview {
-			background: #000;
-			border: 1px solid #555;
-			image-rendering: pixelated;
-			display: block;
-			margin: 10px auto;
-		}
-
-		.seed-pool {
-			display: flex;
-			flex-wrap: wrap;
-			gap: 4px;
-			background: var(--bg-darker);
-			padding: 8px;
-			min-height: 40px;
-			border-radius: 4px;
-			margin-bottom: 8px;
-		}
-
-		.seed-swatch {
-			width: 12px;
-			height: 12px;
-			border: 1px solid #fff;
-		}
-	</style>
-</head>
-
-<body>
-
-	<div id="sidebar">
-		<a href="#header-palettes">Viewer & Editor</a>
-		<a href="#header-color-swap">Color Swap</a>
-		<!-- <a href="#header-arrays">Palette Code</a> -->
-		<a href="#header-dither-match">Dither & Match</a>
-		<a href="#header-ramp-rand">Ramper & Randomizer</a>
-		<a href="#header-import-colors">Color Importer</a>
+	<body>
 		
-	</div>
-
-	<div class="container">
-		<h1>Petz Paletteaire</h1>
-		<h2>v2.1</h2>
-		<p style="text-align:center;">A handy web app for working with P.F. Magic palettes and swapping palettes in
-			bulk!</p>
-		<p style="text-align:center;">- Kathleen @ <a href="https://www.tabbloza.com/petz" target="_blank">Tabbloza</a>
-		</p>
-
-		<p class="instr">2026-01-15: Many updates to the paletteiare! You can now edit palettes and export as palette BMPs to use in-game. You can also find close color matches (or 2-color dithers).</p>
-		<p class="instr">2026-01-16: Added dither levels, Floyd-Steinberg dithers to color matching, and shift-select for swatches.</p>
-
-		<!-- PALETTE VIEWER & EDITOR -->
-		<div class="card" id="header-palettes">
-			<h3>Viewer & Editor</h3>
-			<p class="instr">Load, view, edit, and generate palettes! Click colors to select for batch effects. Hold <b>Shift</b> to select ranges. Double-click to edit colors manually.</p>
-			<p class="instr"><b>Note:</b> Your current working palette should match your input images for <a
+		<div id="sidebar">
+			<a href="#header-palettes">Viewer & Editor</a>
+			<a href="#header-color-swap">Color Swap</a>
+			<!-- <a href="#header-arrays">Palette Code</a> -->
+			<a href="#header-dither-match">Dither & Match</a>
+			<a href="#header-ramp-rand">Ramper & Randomizer</a>
+			<a href="#header-import-colors">Color Importer</a>
+			
+		</div>
+		
+		<div class="container">
+			<h1>Petz Paletteaire</h1>
+			<h2>v2.1</h2>
+			<p style="text-align:center;">A handy web app for working with P.F. Magic palettes and swapping palettes in bulk!</p>
+			<p style="text-align:center;">- Kathleen @ <a href="https://www.tabbloza.com/petz" target="_blank">Tabbloza</a>
+			</p>
+			
+			<p class="instr">2026-01-15: Many updates to the paletteiare! You can now edit palettes and export as palette BMPs to use in-game. You can also find close color matches (or 2-color dithers).</p>
+			<p class="instr">2026-01-16: Added dither levels, Floyd-Steinberg dithers to color matching, and shift-select for swatches.</p>
+			
+			<!-- PALETTE VIEWER & EDITOR -->
+			<div class="card" id="header-palettes">
+				<h3>Viewer & Editor</h3>
+				<p class="instr">Load, view, edit, and generate palettes! Click colors to select for batch effects. Hold <b>Shift</b> to select ranges. Double-click to edit colors manually.</p>
+				<p class="instr"><b>Note:</b> Your current working palette should match your input images for <a
 					href="#header-color-swap">Color Swap</a>.</p>
-
-			<div class="flex-row">
-				<div class="flex-1">
-					<label>Working Palette</label>
-					<div style="display: flex; gap: 5px; margin-bottom: 10px;">
-						<select id="paletteSelect" style="flex: 2;"></select>
-						<button onclick="duplicatePalette()" title="Clone"
-							style="flex: 0.8; margin: 0;">Duplicate</button>
-						<button onclick="renamePalette()" title="Rename"
-							style="flex: 1; margin: 0;">Rename</button>
-					</div>
-
-					<div class="swatch-grid" id="swatchGrid"></div>
-					<div style="display: flex; justify-content: space-between; align-items: center; margin-top: 5px;">
-						<p class="note" style="font-size: 8px; color: var(--primary); margin: 0;">SELECT: click | EDIT: double-click | RANGE: shift+click</p>
-						<div style="display: flex; gap: 4px;">
-							<button onclick="selectIndices('all')"
-								style="padding: 2px 6px; font-size: 7px; margin: 0;">All</button>
-							<button onclick="selectIndices('none')"
-								style="padding: 2px 6px; font-size: 7px; margin: 0;">None</button>
-							<button onclick="selectIndices('invert')"
-								style="padding: 2px 6px; font-size: 7px; margin: 0;">Invert</button>
+					
+					<div class="flex-row">
+						<div class="flex-1">
+							<label>Working Palette</label>
+							<div style="display: flex; gap: 5px; margin-bottom: 10px;">
+								<select id="paletteSelect" style="flex: 2;"></select>
+								<button onclick="duplicatePalette()" title="Clone"
+								style="flex: 0.8; margin: 0;">Duplicate</button>
+								<button onclick="renamePalette()" title="Rename"
+								style="flex: 1; margin: 0;">Rename</button>
+							</div>
+							
+							<div class="swatch-grid" id="swatchGrid"></div>
+							<div style="display: flex; justify-content: space-between; align-items: center; margin-top: 5px;">
+								<p class="note" style="font-size: 8px; color: var(--primary); margin: 0;">SELECT: click | EDIT: double-click | RANGE: shift+click</p>
+								<div style="display: flex; gap: 4px;">
+									<button onclick="selectIndices('all')"
+									style="padding: 2px 6px; font-size: 7px; margin: 0;">All</button>
+									<button onclick="selectIndices('none')"
+									style="padding: 2px 6px; font-size: 7px; margin: 0;">None</button>
+									<button onclick="selectIndices('invert')"
+									style="padding: 2px 6px; font-size: 7px; margin: 0;">Invert</button>
+								</div>
+							</div>
+							
+							<div class="flex-row">
+								<button onclick="downloadPaletteBmp()" style="flex:1">Export .BMP</button>
+								<button onclick="downloadPalettePng()" style="flex:1">Export .PNG</button>
+								<button onclick="resetToDefault()" style="flex:1; background: #666; color: #fff;">Reset</button>
+							</div>
+							
+							<div class="flex-row">
+								<button onclick="downloadAllPaletteSwatches()" style="flex:1;">Download All (PNG)</button>
+							</div>
 						</div>
-					</div>
-
-					<div class="flex-row">
-						<button onclick="downloadPaletteBmp()" style="flex:1">Export .BMP</button>
-						<button onclick="downloadPalettePng()" style="flex:1">Export .PNG</button>
-						<button onclick="resetToDefault()" style="flex:1; background: #666; color: #fff;">Reset</button>
-					</div>
-
-					<div class="flex-row">
-						<button onclick="downloadAllPaletteSwatches()" style="flex:1;">Download All (PNG)</button>
-					</div>
-				</div>
-
-				<div class="flex-1">
-					<label>External Palettes (.bmp, .act, .pal, .png)</label>
-					<p class="instr">Batch load 256-color palettes from a folder, which will appear in dropdown.
-					</p>
-					<input type="file" id="palDir" webkitdirectory directory multiple class="hidden">
-					<button onclick="$('palDir').click()"
-						style="width:100%; font-size: 14px; height: 60px;">Choose Palette
-						Folder</button>
-
-					<div id="palSummary" class="note" style="margin-top: 10px; font-size: 10px;"></div>
-
-					<div class="effect-shelf">
-						<div
-							style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-							<p class="note" style="margin: 0; font-size: 10px;">Quick Effects:</p>
-							<div style="background: #222; padding: 2px 8px; border-radius: 4px; font-size: 9px;">
-								Target:
-								<select id="effectTarget"
+						
+						<div class="flex-1">
+							<div class="effect-shelf">
+								<label>External Palettes (.bmp, .act, .pal, .png)</label>
+								<p class="instr">Batch load 256-color palettes from a folder, which will appear in dropdown.
+								</p>
+								<input type="file" id="palDir" webkitdirectory directory multiple class="hidden">
+								<button onclick="$('palDir').click()"
+								style="width:100%; font-size: 14px; height: 60px;">Choose Palette
+								Folder</button>
+								
+								<div id="palSummary" class="note" style="margin-top: 10px; font-size: 10px;"></div>
+							</div>
+							
+							<div class="effect-shelf">
+								<div
+								style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+								<p class="note" style="margin: 0; font-size: 10px;">Quick Effects:</p>
+								<div style="background: #222; padding: 2px 8px; border-radius: 4px; font-size: 9px;">
+									Target:
+									<select id="effectTarget"
 									style="width: auto; padding: 2px; font-size: 9px; margin-left: 5px;">
 									<option value="selected">Selected Swatches</option>
 									<option value="all">Entire Palette (0-255)</option>
 								</select>
 							</div>
 						</div>
-
+						
 						<div class="flex-row" style="gap: 5px;">
 							<button onclick="applyEffect('grayscale')">Grayscale</button>
 							<button onclick="applyEffect('invert')">Invert</button>
@@ -487,184 +484,220 @@
 						</div>
 						<div style="margin-top: 12px; display: flex; align-items: center; gap: 10px;">
 							<div id="tintPreview" class="color-trigger" style="background: #00bfa5;"
-								onclick="triggerGlobalPicker(event, 'tint')"></div>
+							onclick="triggerGlobalPicker(event, 'tint')"></div>
 							<button onclick="applyTintEffect()" style="flex: 1; margin: 0;">Tint/Shade</button>
 							<div style="flex: 1; text-align: right;">
 								<span class="note" style="font-size: 9px;">Strength: <span
-										id="tintVal">30</span>%</span>
-								<input type="range" id="tintStrength" min="1" max="100" value="30"
+									id="tintVal">30</span>%</span>
+									<input type="range" id="tintStrength" min="1" max="100" value="30"
 									oninput="$('tintVal').textContent=this.value" style="width: 100%;">
+								</div>
 							</div>
-						</div>
-						<div style="margin-top: 12px;">
-							<label class="note" style="font-size: 10px;">Hue Shift: <span id="hueVal">0</span>°</label>
-							<input type="range" id="hueShift" min="0" max="360" value="0"
+							<div style="margin-top: 12px;">
+								<label class="note" style="font-size: 10px;">Hue Shift: <span id="hueVal">0</span>°</label>
+								<input type="range" id="hueShift" min="0" max="360" value="0"
 								oninput="updateHueEffect(this.value)">
+							</div>
 						</div>
-					</div>
-
-					<div class="effect-shelf" style="margin-top: 15px; padding-top: 10px; border-top: 1px solid #444;">
-						<p class="note" style="margin: 0; font-size: 10px;">Shade Range Light-to-Dark:</p>
-						<div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
-					
-							<div style="display:flex; gap:5px; align-items:center;">
-								<div id="reimposeStartPreview" class="color-trigger" style="background:#ffffff"
+						
+						<div class="effect-shelf" style="margin-top: 15px; padding-top: 10px; border-top: 1px solid #444;">
+							<p class="note" style="margin: 0; font-size: 10px;">Shade Range Light-to-Dark:</p>
+							<div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+								
+								<div style="display:flex; gap:5px; align-items:center;">
+									<div id="reimposeStartPreview" class="color-trigger" style="background:#ffffff"
 									onclick="triggerGlobalPicker(event, 'reimposeStart')"></div>
-								<div id="reimposeEndPreview" class="color-trigger" style="background:#000000"
+									<div id="reimposeEndPreview" class="color-trigger" style="background:#000000"
 									onclick="triggerGlobalPicker(event, 'reimposeEnd')"></div>
-							</div>
-					
-							<div style="flex: 1; min-width: 100px;">
-								<span class="note" style="font-size: 9px;">Strength: <span id="reimposeVal">50</span>%</span>
-								<input type="range" id="reimposeStrength" min="1" max="100" value="50"
+								</div>
+								
+								<div style="flex: 1; min-width: 100px;">
+									<span class="note" style="font-size: 9px;">Strength: <span id="reimposeVal">50</span>%</span>
+									<input type="range" id="reimposeStrength" min="1" max="100" value="50"
 									oninput="$('reimposeVal').textContent=this.value" style="width: 100%;">
-							</div>
-					
-							<button onclick="reimposeRamp()"
+								</div>
+								
+								<button onclick="reimposeRamp()"
 								style="margin: 0; padding: 4px 8px; font-size: 9px;">Shade Selected Range</button>
+							</div>
+						</div>
+						
+						<div class="effect-shelf">
+							<label>Icon Repaletter</label>
+							<p class="instr">Swap palette on an icon for sharing your new palette!</p>
+							<div style="margin-bottom: 10px;">
+								<input type="file" id="iconInput" accept="image/*" class="hidden" onchange="previewIcon()">
+								<button onclick="$('iconInput').click()" style="width:100%;">Upload Icon Image</button>
+							</div>
+							<div style="display:grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+								<div>
+									<label style="font-size: 10px;">Source Palette</label>
+									<select id="iconSrcPal" style="font-size: 10px;"></select>
+								</div>
+								<div>
+									<label style="font-size: 10px;">Target Palette</label>
+									<select id="iconTgtPal" style="font-size: 10px;"></select>
+								</div>
+							</div>
+							
+							<div
+							style="display: flex; justify-content: space-around; margin-top: 15px; background: #000; padding: 10px; border-radius: 4px;">
+							<div style="text-align: center;">
+								<span style="font-size: 8px; color: #888;">Before</span>
+								<canvas id="iconPrevBefore" width="32" height="32"
+								style="display: block; width: 64px; height: 64px; border: 1px solid #333; margin-top: 5px;"></canvas>
+							</div>
+							<div style="text-align: center;">
+								<span style="font-size: 8px; color: #888;">After</span>
+								<canvas id="iconPrevAfter" width="32" height="32"
+								style="display: block; width: 64px; height: 64px; border: 1px solid #333; margin-top: 5px;"></canvas>
+							</div>
+						</div>
+						
+						<button onclick="repaletteIcon()" style="width:100%; margin-top: 10px;">Export Indexed
+							BMP</button>
 						</div>
 					</div>
 				</div>
 			</div>
-		</div>
-
-		<!-- COLOR SWAP -->
-		<div class="card" id="header-color-swap">
-			<h3>Color Swap</h3>
-			<p class="instr">Apply loaded palettes to pix PNGs.</p>
-			<div class="flex-row" style="margin-bottom: 20px;">
-				<div class="flex-1">
-					<input type="file" id="imgDir" webkitdirectory directory multiple accept=".png" class="hidden">
-					<button onclick="$('imgDir').click()" style="width:100%; font-size: 14px; height: 60px;">Choose PNG
-						Folder</button>
-					<div id="inputImgThumbs" class="input-thumbs hidden"></div>
-				</div>
-				<div class="flex-1" style="display:flex; flex-direction:column; justify-content: flex-end;">
-					<button id="run" style="width:100%; font-size: 14px; height: 60px;">Color Swap</button>
-				</div>
-			</div>
-		
-			<p><strong>Make sure that current working palette in <a href="#header-palettes">Viewer & Editor</a> matches palette used in pix PNGs!</strong> To swap palettes on your images, you need to specify which palette is used by those images. For example, if your game has "reshade" as the default palette, then your petz pix will be paletted and you need to provide "reshade.bmp" in your palette folder and select it. The default Petz palette is built-in! Color Swap does not work well in pix that contain multiple petz using different palettes.</p>
-		
-			<div class="flex-row"
-				style="margin-bottom: 15px; align-items: flex-end; border-top: 1px solid #444; padding-top: 15px;">
-				<div style="flex: 1;">
-					<label>Sort Results By:</label>
-					<select id="sortOption" onchange="renderGroups()">
-						<option value="alphabetical">Alphabetical</option>
-						<option value="meanhue">Mean Hue</option>
-						<option value="medianhue">Median Hue</option>
-						<option value="darktolight">Dark to Light</option>
-						<option value="mutedtovivid">Muted to Vivid</option>
-						<option value="warmtocool">Warm to Cool</option>
-					</select>
-				</div>
-				<button id="downloadAll" onclick="downloadAllGenerated()"
+			
+			<!-- COLOR SWAP -->
+			<div class="card" id="header-color-swap">
+				<h3>Color Swap</h3>
+				<p class="instr">Apply loaded palettes to pix PNGs.</p>
+				<div class="flex-row" style="margin-bottom: 20px;">
+					<div class="flex-1">
+						<input type="file" id="imgDir" webkitdirectory directory multiple accept=".png" class="hidden">
+						<button onclick="$('imgDir').click()" style="width:100%; font-size: 14px; height: 60px;">Choose PNG
+							Folder</button>
+							<div id="inputImgThumbs" class="input-thumbs hidden"></div>
+						</div>
+						<div class="flex-1" style="display:flex; flex-direction:column; justify-content: flex-end;">
+							<button id="run" style="width:100%; font-size: 14px; height: 60px;">Color Swap</button>
+						</div>
+					</div>
+					
+					<p><strong>Make sure that current working palette in <a href="#header-palettes">Viewer & Editor</a> matches palette used in pix PNGs!</strong> To swap palettes on your images, you need to specify which palette is used by those images. For example, if your game has "reshade" as the default palette, then your petz pix will be paletted and you need to provide "reshade.bmp" in your palette folder and select it. The default Petz palette is built-in! Color Swap does not work well in pix that contain multiple petz using different palettes.</p>
+					
+					<div class="flex-row"
+					style="margin-bottom: 15px; align-items: flex-end; border-top: 1px solid #444; padding-top: 15px;">
+					<div style="flex: 1;">
+						<label>Sort Results By:</label>
+						<select id="sortOption" onchange="renderGroups()">
+							<option value="alphabetical">Alphabetical</option>
+							<option value="meanhue">Mean Hue</option>
+							<option value="medianhue">Median Hue</option>
+							<option value="darktolight">Dark to Light</option>
+							<option value="mutedtovivid">Muted to Vivid</option>
+							<option value="warmtocool">Warm to Cool</option>
+						</select>
+					</div>
+					<button id="downloadAll" onclick="downloadAllGenerated()"
 					style="display:none; background: #4caf50; color:#fff;">Download All
 					Swaps</button>
+				</div>
+				
+				<div id="selectionList" style="margin-bottom: 20px;">
+					<label>Selection List:</label>
+					<textarea id="palOut" rows="4" placeholder="Favorite palettes will list here..."></textarea>
+				</div>
+				
+				<div id="previewContainer"></div>
+				<div id="links" class="hidden"></div>
 			</div>
-		
-			<div id="selectionList" style="margin-bottom: 20px;">
-				<label>Selection List:</label>
-				<textarea id="palOut" rows="4" placeholder="Favorite palettes will list here..."></textarea>
-			</div>
-		
-			<div id="previewContainer"></div>
-			<div id="links" class="hidden"></div>
-		</div>
-
-		<!-- DITHER & MATCH -->
-		<div class="flex-row">
-			<div class="card flex-1" id="header-dither-match">
-				<h3>Dither Colors</h3>
-				<p class="instr">Generate dither textures using two indices from your palette. "Level" affects pattern density or thresholds. Especially useful when
-					hexing in the base game palette or other color-limited palettes!</p>
-				<div class="flex-row" style="align-items: center;">
-					<div style="flex:1">
-						<label>Index 1 / 2</label>
-						<div style="display:flex; gap:5px;">
-							<input type="number" id="ditherIdx1" value="10" min="0" max="255"
-								onchange="renderDitherPreview()">
-							<input type="number" id="ditherIdx2" value="19" min="0" max="255"
-								onchange="renderDitherPreview()">
+			
+			<!-- DITHER & MATCH -->
+			<div class="flex-row">
+				<div class="card flex-1" id="header-dither-match">
+					<h3>Dither Colors</h3>
+					<p class="instr">Generate dither textures using two indices from your palette. "Level" affects pattern density or thresholds. Especially useful when
+						hexing in the base game palette or other color-limited palettes!</p>
+						<div class="flex-row" style="align-items: center;">
+							<div style="flex:1">
+								<label>Index 1 / 2</label>
+								<div style="display:flex; gap:5px;">
+									<input type="number" id="ditherIdx1" value="10" min="0" max="255"
+									onchange="renderDitherPreview()">
+									<input type="number" id="ditherIdx2" value="19" min="0" max="255"
+									onchange="renderDitherPreview()">
+								</div>
+								<label style="margin-top:10px">Pattern & Level (<span id="ditherLevVal">50</span>%)</label>
+								<select id="ditherPattern" onchange="renderDitherPreview()">
+									<option value="checker">Checkerboard Dither</option>
+									<option value="bayer">Bayer Dither</option>
+									<option value="fs">Floyd-Steinberg Dither</option>
+									<option value="noise">Noise</option>
+									<option value="v-stripes">Vertical</option>
+									<option value="h-stripes">Horizontal</option>
+								</select>
+								<input type="range" id="ditherLevel" min="0" max="100" value="50"
+								oninput="$('ditherLevVal').textContent=this.value; renderDitherPreview();"
+								style="width:100%;">
+							</div>
+							<div style="text-align: center;">
+								<canvas id="ditherCanvas" width="32" height="32" class="canvas-preview"
+								style="width:96px; height:96px;"></canvas>
+								<button onclick="downloadDitherBmp()" style="font-size:8px;">Save BMP</button>
+							</div>
 						</div>
-						<label style="margin-top:10px">Pattern & Level (<span id="ditherLevVal">50</span>%)</label>
-						<select id="ditherPattern" onchange="renderDitherPreview()">
-							<option value="checker">Checkerboard</option>
-							<option value="bayer">Bayer (Ordered)</option>
-							<option value="fs">Floyd-Steinberg</option>
-							<option value="noise">Noise</option>
-							<option value="v-stripes">Vertical</option>
-							<option value="h-stripes">Horizontal</option>
-						</select>
-						<input type="range" id="ditherLevel" min="0" max="100" value="50"
-							oninput="$('ditherLevVal').textContent=this.value; renderDitherPreview();"
-							style="width:100%;">
 					</div>
-					<div style="text-align: center;">
-						<canvas id="ditherCanvas" width="32" height="32" class="canvas-preview"
-							style="width:96px; height:96px;"></canvas>
-						<button onclick="downloadDitherBmp()" style="font-size:8px;">Save BMP</button>
+					
+					<div class="card flex-1" id="match">
+						<h3>Match Colors</h3>
+						<p class="instr">Find the palette index (or dithered pair) that best matches an external color.</p>
+						<label>Pick Target Color:</label>
+						<div style="display:flex; align-items:center; gap:10px;">
+							<input type="color" id="targetColor" value="#ff0000" style="height:45px;">
+							<button onclick="findMatch()" style="flex: 1; margin: 0;">Find Closest</button>
+						</div>
+						<div id="matchOutput" class="note"
+						style="margin-top: 15px; background: var(--bg-darker); padding: 10px; border-radius: 4px; font-size: 11px;">
+						Matches will appear here...
 					</div>
 				</div>
-			</div>
-
-			<div class="card flex-1" id="match">
-				<h3>Match Colors</h3>
-				<p class="instr">Find the palette index (or dithered pair) that best matches an external color.</p>
-				<label>Pick Target Color:</label>
-				<div style="display:flex; align-items:center; gap:10px;">
-					<input type="color" id="targetColor" value="#ff0000" style="height:45px;">
-					<button onclick="findMatch()" style="flex: 1; margin: 0;">Find Closest</button>
-				</div>
-				<div id="matchOutput" class="note"
-					style="margin-top: 15px; background: var(--bg-darker); padding: 10px; border-radius: 4px; font-size: 11px;">
-					Matches will appear here...
-				</div>
-			</div>
-
-			<!-- <div class="card flex-1" id="match">
-				<h3>Match Colors</h3>
-				<p class="instr">Find the best single index or auto-dithered approximation to an external color.</p>
-				<label>Pick Target Color:</label>
-				<div style="display:flex; align-items:center; gap:10px;">
-					<input type="color" id="targetColor" value="#ff0000" style="height:45px;">
-					<button onclick="findMatch('single')" style="flex: 1; margin: 0;">Best Single</button>
-					<button onclick="findMatch('fs')"
+				
+				<!-- <div class="card flex-1" id="match">
+					<h3>Match Colors</h3>
+					<p class="instr">Find the best single index or auto-dithered approximation to an external color.</p>
+					<label>Pick Target Color:</label>
+					<div style="display:flex; align-items:center; gap:10px;">
+						<input type="color" id="targetColor" value="#ff0000" style="height:45px;">
+						<button onclick="findMatch('single')" style="flex: 1; margin: 0;">Best Single</button>
+						<button onclick="findMatch('fs')"
 						style="flex: 1; margin: 0; background: var(--accent);">Auto-Dither</button>
-				</div>
-				<div id="matchOutput" class="note"
+					</div>
+					<div id="matchOutput" class="note"
 					style="margin-top: 15px; background: var(--bg-darker); padding: 10px; border-radius: 4px; font-size: 11px;">
 					Matches will appear here...
 				</div>
 			</div> -->
-
+			
 		</div>
 		<!-- PALETTE ARRAYS -->
-		<!-- <div class="card" id="header-arrays">
-            <h3>Palette Array</h3>
-            <p class="instr">Copy the following JavaScript array code for this palette.</p>
-            <textarea id="paletteCodeBox" rows="8" readonly onclick="this.select()" style="cursor: text;"></textarea>
-            <div style="text-align: right; margin-top: 8px;">
-                <button onclick="copyToClipboard('paletteCodeBox')" style="background: #3f51b5; color: #fff;">Copy
-                    Code</button>
-            </div>
-        </div> -->
+		<!-- 
+		<div class="card" id="header-arrays">
+			<h3>Palette Array</h3>
+			<p class="instr">Copy the following JavaScript array code for this palette.</p>
+			<textarea id="paletteCodeBox" rows="8" readonly onclick="this.select()" style="cursor: text;"></textarea>
+			<div style="text-align: right; margin-top: 8px;">
+				<button onclick="copyToClipboard('paletteCodeBox')" style="background: #3f51b5; color: #fff;">Copy Code</button>
+			</div>
+		</div> -->
 
 		<!-- RAMPER & RANDOMIZER -->
 		<div class="card" id="header-ramp-rand">
 			<h3>Ramper & Randomizer</h3>
 			<p class="instr">Randomize color ramps. Set and toggle anchor colors for ramps. Checkboxes mark which ramps
 				to update. Use column headers to set all anchor colors or clear columns.</p>
-
+			
 			<div class="master-controls">
 				<div style="text-align: center; border-right: 1px solid #444; padding-right: 10px;">
 					<span class="note" style="font-size: 8px;">ALL</span><br>
 					<input type="checkbox" id="masterRand" onchange="toggleMasterRand(this.checked)"
-						style="margin: 5px 0;">
+					style="margin: 5px 0;">
 					<button onclick="applyShuffleHues()"
-						style="padding: 2px 5px; font-size: 7px; background: #ffeb3b; color: #000; display: block; margin: 0 auto;">Shuffle
-						Hues</button>
+					style="padding: 2px 5px; font-size: 7px; background: #ffeb3b; color: #000; display: block; margin: 0 auto;">Shuffle
+					Hues</button>
 				</div>
 				<div class="anchor-box" style="flex-direction:column; gap:2px;"></div>
 				<div class="anchor-box" style="flex-direction:column; gap:2px;">
@@ -672,37 +705,38 @@
 					<input type="checkbox" onchange="toggleAnchorColumn('Start', this.checked)">
 					<div style="display:flex; align-items:center; gap:5px;">
 						<div id="masterStartPreview" class="color-trigger" style="background:#ffffff"
-							onclick="triggerGlobalPicker(event, 'masterStart')"></div>
+						onclick="triggerGlobalPicker(event, 'masterStart')"></div>
 						<button onclick="applyMaster('start')" style="padding: 2px 5px; font-size: 8px;">Apply</button>
 					</div>
 					<button onclick="clearAnchorCheckboxes('start')"
-						style="padding:2px 4px; font-size:7px; width:100%; background:#666; color:#fff;">None</button>
+					style="padding:2px 4px; font-size:7px; width:100%; background:#666; color:#fff;">None</button>
 				</div>
 				<div class="anchor-box" style="flex-direction:column; gap:2px;">
 					<span class="note" style="font-size: 8px;">MID</span>
 					<input type="checkbox" onchange="toggleAnchorColumn('Mid', this.checked)">
 					<div style="display:flex; align-items:center; gap:5px;">
 						<div id="masterMidPreview" class="color-trigger" style="background:#888888"
-							onclick="triggerGlobalPicker(event, 'masterMid')"></div>
+						onclick="triggerGlobalPicker(event, 'masterMid')"></div>
 						<button onclick="applyMaster('mid')" style="padding: 2px 5px; font-size: 8px;">Apply</button>
 					</div>
 					<button onclick="clearAnchorCheckboxes('mid')"
-						style="padding:2px 4px; font-size:7px; width:100%; background:#666; color:#fff;">None</button>
+					style="padding:2px 4px; font-size:7px; width:100%; background:#666; color:#fff;">None</button>
 				</div>
 				<div class="anchor-box" style="flex-direction:column; gap:2px;">
 					<span class="note" style="font-size: 8px;">END</span>
 					<input type="checkbox" onchange="toggleAnchorColumn('End', this.checked)">
 					<div style="display:flex; align-items:center; gap:5px;">
 						<div id="masterEndPreview" class="color-trigger" style="background:#000000"
-							onclick="triggerGlobalPicker(event, 'masterEnd')"></div>
+						onclick="triggerGlobalPicker(event, 'masterEnd')"></div>
 						<button onclick="applyMaster('end')" style="padding: 2px 5px; font-size: 8px;">Apply</button>
 					</div>
 					<button onclick="clearAnchorCheckboxes('end')"
-						style="padding:2px 4px; font-size:7px; width:100%; background:#666; color:#fff;">None</button>
+					style="padding:2px 4px; font-size:7px; width:100%; background:#666; color:#fff;">None</button>
 				</div>
 			</div>
-			<div class="range-container" id="rangeControls"></div>
 
+			<div class="range-container" id="rangeControls"></div>
+			
 			<div class="flex-row" style="align-items: flex-end;">
 				<div class="flex-1">
 					<label>Ramp Logic</label>
@@ -715,55 +749,53 @@
 					</select>
 				</div>
 				<div class="flex-1" style="display: flex; gap: 10px;">
-					<button onclick="generatePalette(true)" style="width:100%; flex: 1; margin: 0;">Modify Current
-						Palette</button>
-					<button onclick="generatePalette(false)" style="width:100%; flex: 1; margin: 0;">Generate New
-						Palette</button>
+					<button onclick="generatePalette(true)" style="width:100%; flex: 1; margin: 0;">Modify Current Palette</button>
+					<button onclick="generatePalette(false)" style="width:100%; flex: 1; margin: 0;">Generate NewPalette</button>
 				</div>
 			</div>
 		</div>
-
+					
 		<!-- COLOR IMPORTER -->
 		<div class="card" id="header-import-colors">
 			<h3>Color Importer</h3>
 			<p class="instr">Extract colors from <strong>ACT</strong>, <strong>PAL</strong>, or <strong><a
-						href="https://chromora.com/">Chromora</a> JSON</strong> palette files. These can be distributed
+				href="https://chromora.com/">Chromora</a> JSON</strong> palette files. These can be distributed
 				randomly into the start/mid/end anchors for ramps.</p>
-			<div class="flex-row" style="align-items: center;">
-				<div class="flex-1">
-					<label>Select Seed File</label>
-					<input type="file" id="seedFileInput" accept=".act, .pal, .json" style="margin: 10px 0;">
-					<button onclick="handleSeedUpload()" style="width:100%; flex: 1; margin: 0;">Read Colors</button>
-				</div>
-				<div class="flex-1">
-					<label>Imported Color Pool</label>
-					<div id="seedPool" class="seed-pool">
-						<span class="note" style="font-size:10px;">Load a file to see colors...</span>
+				<div class="flex-row" style="align-items: center;">
+					<div class="flex-1">
+						<label>Select Seed File</label>
+						<input type="file" id="seedFileInput" accept=".act, .pal, .json" style="margin: 10px 0;">
+						<button onclick="handleSeedUpload()" style="width:100%; flex: 1; margin: 0;">Read Colors</button>
 					</div>
-					<button id="pushSeeds" onclick="pushSeedsToLab()" style="width:100%; flex: 1; margin: 0;"
+					<div class="flex-1">
+						<label>Imported Color Pool</label>
+						<div id="seedPool" class="seed-pool">
+							<span class="note" style="font-size:10px;">Load a file to see colors...</span>
+						</div>
+						<button id="pushSeeds" onclick="pushSeedsToLab()" style="width:100%; flex: 1; margin: 0;"
 						disabled>Populate Ramper</button>
+					</div>
 				</div>
 			</div>
 		</div>
-	</div>
-
-	<!-- COLOR PICKER -->
-	<div id="colorPopup">
-		<label id="popupTitle" class="note" style="font-size: 10px; color: var(--primary);">Edit Color</label>
-		<input type="color" id="popupPicker" style="width:100%; height:40px; margin: 8px 0;">
-		<input type="text" id="popupHex" placeholder="#FFFFFF" style="font-size:12px; margin-bottom: 8px;">
-		<div style="display:flex; gap:5px;">
-			<button onclick="closePopup(true)" style="flex:1; padding:5px; font-size:8px;">OK</button>
-			<button onclick="closePopup(false)"
+					
+		<!-- COLOR PICKER -->
+		<div id="colorPopup">
+			<label id="popupTitle" class="note" style="font-size: 10px; color: var(--primary);">Edit Color</label>
+			<input type="color" id="popupPicker" style="width:100%; height:40px; margin: 8px 0;">
+			<input type="text" id="popupHex" placeholder="#FFFFFF" style="font-size:12px; margin-bottom: 8px;">
+			<div style="display:flex; gap:5px;">
+				<button onclick="closePopup(true)" style="flex:1; padding:5px; font-size:8px;">OK</button>
+				<button onclick="closePopup(false)"
 				style="flex:1; padding:5px; font-size:8px; background:#666; color:#fff;">Cancel</button>
+			</div>
 		</div>
-	</div>
-
-	<script>
-		const $ = id => document.getElementById(id);
-
-		// Petz base game palette
-		const basePaletteArr = [
+					
+		<script>
+			const $ = id => document.getElementById(id);
+			
+			// Petz base game palette
+			const basePaletteArr = [
 			[255, 255, 255],
 			[128, 0, 0],
 			[0, 128, 0],
@@ -1020,10 +1052,10 @@
 			[255, 0, 255],
 			[0, 255, 255],
 			[0, 0, 0]
-		];
-
-		// Babyz base game palette
-		const babyzPaletteArr = [
+			];
+			
+			// Babyz base game palette
+			const babyzPaletteArr = [
 			[255, 255, 255], [128, 0, 0], [0, 128, 0], [128, 128, 0], [0, 0, 128], [128, 0, 128], [0, 128, 128], [192, 192, 192],
 			[192, 204, 216], [0, 0, 0], [180, 115, 22], [234, 235, 144], [132, 98, 53], [189, 124, 143], [98, 112, 125], [211, 206, 199],
 			[107, 74, 12], [137, 100, 88], [74, 33, 18], [140, 88, 66], [190, 120, 97], [175, 115, 95], [218, 152, 126], [144, 107, 137],
@@ -1056,99 +1088,99 @@
 			[184, 50, 66], [136, 68, 66], [85, 68, 127], [126, 140, 134], [207, 16, 12], [146, 25, 20], [51, 47, 18], [17, 40, 14],
 			[13, 16, 41], [0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0], [255, 255, 255], [80, 100, 128], [0, 0, 0],
 			[128, 128, 128], [255, 0, 0], [0, 255, 0], [255, 255, 0], [0, 0, 255], [255, 0, 255], [0, 255, 255], [255, 255, 255]
-		];
-
-		let activePalette = JSON.parse(JSON.stringify(basePaletteArr));
-		let loadedPalettes = {
-			"Petz Base Game": JSON.parse(JSON.stringify(basePaletteArr)),
-			"Babyz Base Game": JSON.parse(JSON.stringify(babyzPaletteArr))
-		};
-		let rangeSettings = [];
-		let cachedImageGroups = {};
-		let selectedPals = new Set();
-		let selectedIndices = new Set();
-		let currentPickerCallback = null;
-		let seedColors = [];
-		let globalPickerColors = { tint: "#00bfa5", masterStart: "#ffffff", masterMid: "#888888", masterEnd: "#000000", reimposeStart: "#ffffff", reimposeEnd: "#000000" };
-		let originalPalBeforeHue = null;
-
-		// Helpers
-		const rgbToHex = (r, g, b) => "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
-		const hexToRgb = h => { const r = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(h.trim()); return r ? { r: parseInt(r[1], 16), g: parseInt(r[2], 16), b: parseInt(r[3], 16) } : null; };
-		const avg = arr => arr.length ? arr.reduce((a, b) => a + b, 0) / arr.length : 0;
-		const median = arr => { if (!arr.length) return 0; const s = [...arr].sort((a, b) => a - b); const mid = Math.floor(s.length / 2); return s.length % 2 ? s[mid] : (s[mid - 1] + s[mid]) / 2; };
-
-		function rgbToHsv(r, g, b) {
-			r /= 255, g /= 255, b /= 255; let max = Math.max(r, g, b), min = Math.min(r, g, b), h, s, v = max, d = max - min;
-			s = max == 0 ? 0 : d / max; if (max == min) h = 0; else { switch (max) { case r: h = (g - b) / d + (g < b ? 6 : 0); break; case g: h = (b - r) / d + 2; break; case b: h = (r - g) / d + 4; break; } h /= 6; }
-			return { h, s, v };
-		}
-		function hsvToRgb(h, s, v) {
-			let r, g, b, i = Math.floor(h * 6), f = h * 6 - i, p = v * (1 - s), q = v * (1 - f * s), t = v * (1 - (1 - f) * s);
-			switch (i % 6) { case 0: r = v, g = t, b = p; break; case 1: r = q, g = v, b = p; break; case 2: r = p, g = v, b = t; break; case 3: r = p, g = q, b = v; break; case 4: r = t, g = p, b = v; break; case 5: r = v, g = p, b = q; break; }
-			return { r: Math.round(r * 255), g: Math.round(g * 255), b: Math.round(b * 255) };
-		}
-
-		// const lerp = (a, b, t) => ({ r: Math.round(a.r + (b.r - a.r) * t), g: Math.round(a.g + (b.g - a.g) * t), b: Math.round(a.b + (b.b - a.b) * t) });
-
-		window.onload = () => {
-			initLabRanges();
-			renderSwatchGrid();
-			updatePaletteSelect();
-			// updatePaletteCode();
-			renderDitherPreview();
-		};
-
-		// User Interface
-		function openColorPopup(title, initialHex, x, y, callback) {
-			const popup = $('colorPopup');
-			$('popupTitle').textContent = title;
-			$('popupPicker').value = initialHex;
-			$('popupHex').value = initialHex.toUpperCase();
-			const posX = Math.min(x + 15, window.innerWidth - 200);
-			const posY = Math.min(y - 50, window.innerHeight - 200);
-			popup.style.left = posX + 'px';
-			popup.style.top = posY + 'px';
-			popup.style.display = 'block';
-			currentPickerCallback = callback;
-			$('popupPicker').oninput = (e) => $('popupHex').value = e.target.value.toUpperCase();
-			$('popupHex').oninput = (e) => {
-				const c = hexToRgb(e.target.value);
-				if (c) $('popupPicker').value = e.target.value;
+			];
+			
+			let activePalette = JSON.parse(JSON.stringify(basePaletteArr));
+			let loadedPalettes = {
+				"Petz Base Game": JSON.parse(JSON.stringify(basePaletteArr)),
+				"Babyz Base Game": JSON.parse(JSON.stringify(babyzPaletteArr))
 			};
-		}
-
-		function closePopup(save) {
-			if (save && currentPickerCallback) {
-				const hex = $('popupHex').value;
-				if (hexToRgb(hex)) currentPickerCallback(hex);
+			let rangeSettings = [];
+			let cachedImageGroups = {};
+			let selectedPals = new Set();
+			let selectedIndices = new Set();
+			let currentPickerCallback = null;
+			let seedColors = [];
+			let globalPickerColors = { tint: "#00bfa5", masterStart: "#ffffff", masterMid: "#888888", masterEnd: "#000000", reimposeStart: "#ffffff", reimposeEnd: "#000000" };
+			let originalPalBeforeHue = null;
+			
+			// Helpers
+			const rgbToHex = (r, g, b) => "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+			const hexToRgb = h => { const r = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(h.trim()); return r ? { r: parseInt(r[1], 16), g: parseInt(r[2], 16), b: parseInt(r[3], 16) } : null; };
+			const avg = arr => arr.length ? arr.reduce((a, b) => a + b, 0) / arr.length : 0;
+			const median = arr => { if (!arr.length) return 0; const s = [...arr].sort((a, b) => a - b); const mid = Math.floor(s.length / 2); return s.length % 2 ? s[mid] : (s[mid - 1] + s[mid]) / 2; };
+			
+			function rgbToHsv(r, g, b) {
+				r /= 255, g /= 255, b /= 255; let max = Math.max(r, g, b), min = Math.min(r, g, b), h, s, v = max, d = max - min;
+				s = max == 0 ? 0 : d / max; if (max == min) h = 0; else { switch (max) { case r: h = (g - b) / d + (g < b ? 6 : 0); break; case g: h = (b - r) / d + 2; break; case b: h = (r - g) / d + 4; break; } h /= 6; }
+				return { h, s, v };
 			}
-			$('colorPopup').style.display = 'none';
-			currentPickerCallback = null;
-		}
-
-		function copyToClipboard(id) {
-			const el = $(id);
-			el.select();
-			document.execCommand('copy');
-		}
-
-		// Swatch Logic
-		function selectIndices(mode) {
+			function hsvToRgb(h, s, v) {
+				let r, g, b, i = Math.floor(h * 6), f = h * 6 - i, p = v * (1 - s), q = v * (1 - f * s), t = v * (1 - (1 - f) * s);
+				switch (i % 6) { case 0: r = v, g = t, b = p; break; case 1: r = q, g = v, b = p; break; case 2: r = p, g = v, b = t; break; case 3: r = p, g = q, b = v; break; case 4: r = t, g = p, b = v; break; case 5: r = v, g = p, b = q; break; }
+				return { r: Math.round(r * 255), g: Math.round(g * 255), b: Math.round(b * 255) };
+			}
+			
+			// const lerp = (a, b, t) => ({ r: Math.round(a.r + (b.r - a.r) * t), g: Math.round(a.g + (b.g - a.g) * t), b: Math.round(a.b + (b.b - a.b) * t) });
+			
+			window.onload = () => {
+				initLabRanges();
+				renderSwatchGrid();
+				updatePaletteSelect();
+				// updatePaletteCode();
+				renderDitherPreview();
+			};
+			
+			// User Interface
+			function openColorPopup(title, initialHex, x, y, callback) {
+				const popup = $('colorPopup');
+				$('popupTitle').textContent = title;
+				$('popupPicker').value = initialHex;
+				$('popupHex').value = initialHex.toUpperCase();
+				const posX = Math.min(x + 15, window.innerWidth - 200);
+				const posY = Math.min(y - 50, window.innerHeight - 200);
+				popup.style.left = posX + 'px';
+				popup.style.top = posY + 'px';
+				popup.style.display = 'block';
+				currentPickerCallback = callback;
+				$('popupPicker').oninput = (e) => $('popupHex').value = e.target.value.toUpperCase();
+				$('popupHex').oninput = (e) => {
+					const c = hexToRgb(e.target.value);
+					if (c) $('popupPicker').value = e.target.value;
+				};
+			}
+			
+			function closePopup(save) {
+				if (save && currentPickerCallback) {
+					const hex = $('popupHex').value;
+					if (hexToRgb(hex)) currentPickerCallback(hex);
+				}
+				$('colorPopup').style.display = 'none';
+				currentPickerCallback = null;
+			}
+			
+			function copyToClipboard(id) {
+				const el = $(id);
+				el.select();
+				document.execCommand('copy');
+			}
+			
+			// Swatch Logic
+			function selectIndices(mode) {
 				if (mode === 'all') for (let i = 0; i < 256; i++) selectedIndices.add(i);
 				else if (mode === 'none') selectedIndices.clear();
 				else if (mode === 'invert') for (let i = 0; i < 256; i++) selectedIndices.has(i) ? selectedIndices.delete(i) : selectedIndices.add(i);
 				renderSwatchGrid();
 			}
-
-		function renderSwatchGrid() {
+			
+			function renderSwatchGrid() {
 				const grid = $('swatchGrid'); grid.innerHTML = '';
 				activePalette.forEach((rgb, i) => {
 					const s = document.createElement('div');
 					s.className = 'swatch' + (selectedIndices.has(i) ? ' selected' : '');
 					s.style.backgroundColor = `rgb(${rgb[0]},${rgb[1]},${rgb[2]})`;
 					s.dataset.index = i;
-
+					
 					s.onclick = (e) => {
 						if (e.shiftKey && lastSelectedIndex !== null) {
 							const start = Math.min(i, lastSelectedIndex);
@@ -1162,7 +1194,7 @@
 						lastSelectedIndex = i;
 						renderSwatchGrid();
 					};
-
+					
 					s.ondblclick = (e) => {
 						openColorPopup(`Index ${i}`, rgbToHex(rgb[0], rgb[1], rgb[2]), e.clientX, e.clientY, (hex) => {
 							const c = hexToRgb(hex);
@@ -1172,352 +1204,445 @@
 					};
 					grid.appendChild(s);
 				});
-			// updatePaletteCode();
-		}
-
-		// Palette Management
-		function updatePaletteSelect() {
-			const s = $('paletteSelect');
-			const currentVal = s.value;
-			s.innerHTML = '';
-			Object.keys(loadedPalettes).forEach(k => {
-				const o = document.createElement('option'); o.value = k; o.textContent = k; s.appendChild(o);
-			});
-			if (loadedPalettes[currentVal]) s.value = currentVal;
-
-			s.onchange = () => {
-				activePalette = JSON.parse(JSON.stringify(loadedPalettes[s.value]));
+				// updatePaletteCode();
+			}
+			
+			// Palette Management
+			function updatePaletteSelect() {
+				const s = $('paletteSelect');
+				const dropdowns = [s, $('iconSrcPal'), $('iconTgtPal')];
+				const keys = Object.keys(loadedPalettes);
+				
+				dropdowns.forEach(dropdown => {
+					if (!dropdown) return;
+					const cur = dropdown.value;
+					dropdown.innerHTML = '';
+					keys.forEach(k => {
+						const o = document.createElement('option');
+						o.value = k;
+						o.textContent = k;
+						dropdown.appendChild(o);
+					});
+					if (loadedPalettes[cur]) dropdown.value = cur;
+				});
+				
+				s.onchange = () => {
+					activePalette = JSON.parse(JSON.stringify(loadedPalettes[s.value]));
+					originalPalBeforeHue = null;
+					renderSwatchGrid();
+					refreshLabAnchors();
+					// updatePaletteCode();
+				};
+				
+				if ($('iconSrcPal')) $('iconSrcPal').onchange = previewIcon;
+				if ($('iconTgtPal')) $('iconTgtPal').onchange = previewIcon;
+			}
+			
+			function saveActiveToMemory() {
+				const current = $('paletteSelect').value;
+				loadedPalettes[current] = JSON.parse(JSON.stringify(activePalette));
+			}
+			
+			function duplicatePalette() {
+				const current = $('paletteSelect').value;
+				const newName = prompt("Enter name for duplicate:", current + " (copy)");
+				if (newName) {
+					loadedPalettes[newName] = JSON.parse(JSON.stringify(activePalette));
+					updatePaletteSelect();
+					$('paletteSelect').value = newName;
+					// updatePaletteCode();
+				}
+			}
+			
+			function renamePalette() {
+				const current = $('paletteSelect').value;
+				if (current.includes("Base Game")) return alert("Cannot rename base game palettes.");
+				const newName = prompt("Enter new name:", current);
+				if (newName && newName !== current) {
+					loadedPalettes[newName] = loadedPalettes[current];
+					delete loadedPalettes[current];
+					updatePaletteSelect();
+					$('paletteSelect').value = newName;
+				}
+			}
+			
+			function resetToDefault() {
+				activePalette = JSON.parse(JSON.stringify(basePaletteArr));
 				originalPalBeforeHue = null;
+				saveActiveToMemory();
 				renderSwatchGrid();
 				refreshLabAnchors();
 				// updatePaletteCode();
-			};
-		}
-
-		function saveActiveToMemory() {
-			const current = $('paletteSelect').value;
-			loadedPalettes[current] = JSON.parse(JSON.stringify(activePalette));
-		}
-
-		function duplicatePalette() {
-			const current = $('paletteSelect').value;
-			const newName = prompt("Enter name for duplicate:", current + " (copy)");
-			if (newName) {
-				loadedPalettes[newName] = JSON.parse(JSON.stringify(activePalette));
-				updatePaletteSelect();
-				$('paletteSelect').value = newName;
+			}
+			
+			// function updatePaletteCode() {
+			//     let code = "const basePaletteArr = [\n    ";
+			//     activePalette.forEach((rgb, i) => {
+			//         code += `[${rgb[0]}, ${rgb[1]}, ${rgb[2]}]`;
+			//         if (i < 255) {
+			//             code += (i % 8 === 7) ? ",\n    " : ", ";
+			//         }
+			//     });
+			//     code += "\n];";
+			//     $('paletteCodeBox').value = code;
+			// }
+			
+			// Quick Effects
+			function triggerGlobalPicker(e, key) {
+				const rect = e.target.getBoundingClientRect();
+				openColorPopup(`Pick ${key}`, globalPickerColors[key], rect.left + window.scrollX, rect.top + window.scrollY, (hex) => {
+					globalPickerColors[key] = hex;
+					const previewEl = $(`${key}Preview`);
+					if (previewEl) previewEl.style.background = hex;
+				});
+			}
+			
+			function applyEffect(type) {
+				const targets = $('effectTarget').value === 'all' ? Array.from({ length: 256 }, (_, i) => i) : Array.from(selectedIndices);
+				if (!targets.length) return alert("No swatches selected!");
+				targets.forEach(idx => {
+					let [r, g, b] = activePalette[idx];
+					if (type === 'grayscale') { const v = Math.round(r * 0.299 + g * 0.587 + b * 0.114); activePalette[idx] = [v, v, v]; }
+					else if (type === 'invert') activePalette[idx] = [255 - r, 255 - g, 255 - b];
+					else if (type === 'brighten') activePalette[idx] = [Math.min(255, r + 25), Math.min(255, g + 25), Math.min(255, b + 25)];
+					else if (type === 'darken') activePalette[idx] = [Math.max(0, r - 25), Math.max(0, g - 25), Math.max(0, b - 25)];
+				});
+				saveActiveToMemory(); renderSwatchGrid(); refreshLabAnchors();
 				// updatePaletteCode();
 			}
-		}
-
-		function renamePalette() {
-			const current = $('paletteSelect').value;
-			if (current.includes("Base Game")) return alert("Cannot rename base game palettes.");
-			const newName = prompt("Enter new name:", current);
-			if (newName && newName !== current) {
-				loadedPalettes[newName] = loadedPalettes[current];
-				delete loadedPalettes[current];
-				updatePaletteSelect();
-				$('paletteSelect').value = newName;
+			
+			function applyTintEffect() {
+				const target = hexToRgb(globalPickerColors.tint);
+				const strength = parseInt($('tintStrength').value) / 100;
+				const targets = $('effectTarget').value === 'all' ? Array.from({ length: 256 }, (_, i) => i) : Array.from(selectedIndices);
+				if (!target || !targets.length) return alert("No swatches selected!");
+				targets.forEach(idx => {
+					const rgb = activePalette[idx];
+					const lerped = lerp({ r: rgb[0], g: rgb[1], b: rgb[2] }, target, strength);
+					activePalette[idx] = [lerped.r, lerped.g, lerped.b];
+				});
+				saveActiveToMemory(); renderSwatchGrid(); refreshLabAnchors();
+				// updatePaletteCode();
 			}
-		}
-
-		function resetToDefault() {
-			activePalette = JSON.parse(JSON.stringify(basePaletteArr));
-			originalPalBeforeHue = null;
-			saveActiveToMemory();
-			renderSwatchGrid();
-			refreshLabAnchors();
-			// updatePaletteCode();
-		}
-
-		// function updatePaletteCode() {
-		//     let code = "const basePaletteArr = [\n    ";
-		//     activePalette.forEach((rgb, i) => {
-		//         code += `[${rgb[0]}, ${rgb[1]}, ${rgb[2]}]`;
-		//         if (i < 255) {
-		//             code += (i % 8 === 7) ? ",\n    " : ", ";
-		//         }
-		//     });
-		//     code += "\n];";
-		//     $('paletteCodeBox').value = code;
-		// }
-
-		// Quick Effects
-		function triggerGlobalPicker(e, key) {
-			const rect = e.target.getBoundingClientRect();
-			openColorPopup(`Pick ${key}`, globalPickerColors[key], rect.left + window.scrollX, rect.top + window.scrollY, (hex) => {
-				globalPickerColors[key] = hex;
-				const previewEl = $(`${key}Preview`);
-				if (previewEl) previewEl.style.background = hex;
-			});
-		}
-
-		function applyEffect(type) {
-			const targets = $('effectTarget').value === 'all' ? Array.from({ length: 256 }, (_, i) => i) : Array.from(selectedIndices);
-			if (!targets.length) return alert("No swatches selected!");
-			targets.forEach(idx => {
-				let [r, g, b] = activePalette[idx];
-				if (type === 'grayscale') { const v = Math.round(r * 0.299 + g * 0.587 + b * 0.114); activePalette[idx] = [v, v, v]; }
-				else if (type === 'invert') activePalette[idx] = [255 - r, 255 - g, 255 - b];
-				else if (type === 'brighten') activePalette[idx] = [Math.min(255, r + 25), Math.min(255, g + 25), Math.min(255, b + 25)];
-				else if (type === 'darken') activePalette[idx] = [Math.max(0, r - 25), Math.max(0, g - 25), Math.max(0, b - 25)];
-			});
-			saveActiveToMemory(); renderSwatchGrid(); refreshLabAnchors();
-			// updatePaletteCode();
-		}
-
-		function applyTintEffect() {
-			const target = hexToRgb(globalPickerColors.tint);
-			const strength = parseInt($('tintStrength').value) / 100;
-			const targets = $('effectTarget').value === 'all' ? Array.from({ length: 256 }, (_, i) => i) : Array.from(selectedIndices);
-			if (!target || !targets.length) return alert("No swatches selected!");
-			targets.forEach(idx => {
-				const rgb = activePalette[idx];
-				const lerped = lerp({ r: rgb[0], g: rgb[1], b: rgb[2] }, target, strength);
-				activePalette[idx] = [lerped.r, lerped.g, lerped.b];
-			});
-			saveActiveToMemory(); renderSwatchGrid(); refreshLabAnchors();
-			// updatePaletteCode();
-		}
-
-		function updateHueEffect(val) {
-			$('hueVal').textContent = val;
-			if (!originalPalBeforeHue) originalPalBeforeHue = JSON.parse(JSON.stringify(activePalette));
-			const targets = $('effectTarget').value === 'all' ? Array.from({ length: 256 }, (_, i) => i) : Array.from(selectedIndices);
-			targets.forEach(idx => {
-				const rgb = originalPalBeforeHue[idx];
-				const hsv = rgbToHsv(rgb[0], rgb[1], rgb[2]);
-				const newRgb = hsvToRgb((hsv.h + (val / 360)) % 1, hsv.s, hsv.v);
-				activePalette[idx] = [newRgb.r, newRgb.g, newRgb.b];
-			});
-			saveActiveToMemory(); renderSwatchGrid();
-			// updatePaletteCode();
-		}
-
-		function reimposeRamp() {
+			
+			function updateHueEffect(val) {
+				$('hueVal').textContent = val;
+				if (!originalPalBeforeHue) originalPalBeforeHue = JSON.parse(JSON.stringify(activePalette));
+				const targets = $('effectTarget').value === 'all' ? Array.from({ length: 256 }, (_, i) => i) : Array.from(selectedIndices);
+				targets.forEach(idx => {
+					const rgb = originalPalBeforeHue[idx];
+					const hsv = rgbToHsv(rgb[0], rgb[1], rgb[2]);
+					const newRgb = hsvToRgb((hsv.h + (val / 360)) % 1, hsv.s, hsv.v);
+					activePalette[idx] = [newRgb.r, newRgb.g, newRgb.b];
+				});
+				saveActiveToMemory(); renderSwatchGrid();
+				// updatePaletteCode();
+			}
+			
+			function reimposeRamp() {
 				const targets = Array.from(selectedIndices).sort((a, b) => a - b);
-
+				
 				if (targets.length < 2) {
 					return alert("Please select at least 2 swatches in the grid first.");
 				}
-
+				
 				const lightCol = hexToRgb(globalPickerColors.reimposeStart);
 				const darkCol = hexToRgb(globalPickerColors.reimposeEnd);
 				const strength = parseInt($('reimposeStrength').value) / 100;
-
+				
 				targets.forEach((idx, i) => {
 					const t = i / (targets.length - 1);
-
+					
 					const targetShade = lerp(
-						{ r: lightCol.r, g: lightCol.g, b: lightCol.b },
-						{ r: darkCol.r, g: darkCol.g, b: darkCol.b },
-						t
+					{ r: lightCol.r, g: lightCol.g, b: lightCol.b },
+					{ r: darkCol.r, g: darkCol.g, b: darkCol.b },
+					t
 					);
-
+					
 					const currentRGB = {
 						r: activePalette[idx][0],
 						g: activePalette[idx][1],
 						b: activePalette[idx][2]
 					};
-
+					
 					const final = lerp(currentRGB, targetShade, strength);
-
+					
 					activePalette[idx] = [final.r, final.g, final.b];
 				});
-
+				
 				saveActiveToMemory();
 				renderSwatchGrid();
 				refreshLabAnchors();
 			}
-
-		// Ramper & Randomizer Logic
-		function initLabRanges() {
-			const container = $('rangeControls');
-			const petzRanges = [
-				{ s: 0, e: 9, n: '0-9' }, { s: 10, e: 19, n: '10s' }, { s: 20, e: 29, n: '20s' }, { s: 30, e: 39, n: '30s' },
+			
+			// Ramper & Randomizer Logic
+			function initLabRanges() {
+				const container = $('rangeControls');
+				const petzRanges = [
+				// { s: 0, e: 9, n: '0-9' }, 
+				{ s: 10, e: 19, n: '10s' }, { s: 20, e: 29, n: '20s' }, { s: 30, e: 39, n: '30s' },
 				{ s: 40, e: 49, n: '40s' }, { s: 50, e: 59, n: '50s' }, { s: 60, e: 69, n: '60s' },
 				{ s: 70, e: 79, n: '70s' }, { s: 80, e: 89, n: '80s' }, { s: 90, e: 99, n: '90s' },
 				{ s: 100, e: 109, n: '100s' }, { s: 110, e: 119, n: '110s' }, { s: 120, e: 129, n: '120s' },
 				{ s: 130, e: 139, n: '130s' }, { s: 140, e: 149, n: '140s' }, { s: 150, e: 159, n: '150s' },
 				{ s: 160, e: 169, n: '160s' }, { s: 170, e: 179, n: '170s' }, { s: 180, e: 189, n: '180s' },
-				{ s: 190, e: 199, n: '190s' }, { s: 200, e: 255, n: '200-255' }
-			];
-			petzRanges.forEach((r, i) => {
-				const row = document.createElement('div');
-				row.className = 'range-row';
-				row.innerHTML = `
-					<input type="checkbox" id="rand-${i}">
-					<span class="range-label" onclick="selectIndices('range', [${r.s}, ${r.e}])">${r.n}</span>
-					<div class="anchor-box"><input type="checkbox" id="useStart-${i}"><div id="startPreview-${i}" class="color-trigger" style="background:#fff"></div></div>
-					<div class="anchor-box"><input type="checkbox" id="useMid-${i}"><div id="midPreview-${i}" class="color-trigger" style="background:#888"></div></div>
-					<div class="anchor-box"><input type="checkbox" id="useEnd-${i}"><div id="endPreview-${i}" class="color-trigger" style="background:#000"></div></div>
-				`;
-				container.appendChild(row);
-				rangeSettings.push({ ...r, randomize: false, useStart: false, useMid: false, useEnd: false, startCol: "#ffffff", midCol: "#888888", endCol: "#000000" });
-				$(`startPreview-${i}`).onclick = (e) => triggerAnchorPicker(e, i, 'start');
-				$(`midPreview-${i}`).onclick = (e) => triggerAnchorPicker(e, i, 'mid');
-				$(`endPreview-${i}`).onclick = (e) => triggerAnchorPicker(e, i, 'end');
-				const bind = (id, key) => $(id).onchange = e => rangeSettings[i][key] = e.target.checked;
-				bind(`rand-${i}`, 'randomize'); bind(`useStart-${i}`, 'useStart'); bind(`useMid-${i}`, 'useMid'); bind(`useEnd-${i}`, 'useEnd');
-			});
-			refreshLabAnchors();
-		}
-
-		function triggerAnchorPicker(e, idx, type) {
-			const rect = e.target.getBoundingClientRect();
-			const key = `${type}Col`;
-			openColorPopup(`Ramp Anchor`, rangeSettings[idx][key], rect.left + window.scrollX, rect.top + window.scrollY, (hex) => {
-				rangeSettings[idx][key] = hex;
-				$(`${type}Preview-${idx}`).style.background = hex;
-				const checkKey = `use${type.charAt(0).toUpperCase() + type.slice(1)}`;
-				rangeSettings[idx][checkKey] = true;
-				if ($(`${checkKey}-${idx}`)) $(`${checkKey}-${idx}`).checked = true;
-			});
-		}
-
-		function toggleAnchorColumn(type, checked) {
-			const key = `use${type}`;
-			rangeSettings.forEach((r, i) => {
-				r[key] = checked;
-				const checkbox = $(`${key}-${i}`);
-				if (checkbox) {
-					checkbox.checked = checked;
-				}
-			});
-		}
-
-		function clearAnchorCheckboxes(type) {
-			const key = `use${type.charAt(0).toUpperCase() + type.slice(1)}`;
-			rangeSettings.forEach((r, i) => { r[key] = false; if ($(`${key}-${i}`)) $(`${key}-${i}`).checked = false; });
-		}
-
-		function toggleMasterRand(checked) {
-			rangeSettings.forEach((r, i) => { r.randomize = checked; if ($(`rand-${i}`)) $(`rand-${i}`).checked = checked; });
-		}
-
-		function applyMaster(type) {
-			const hex = globalPickerColors[`master${type.charAt(0).toUpperCase() + type.slice(1)}`];
-			rangeSettings.forEach((r, i) => {
-				r[`${type}Col`] = hex;
-				if ($(`${type}Preview-${i}`)) $(`${type}Preview-${i}`).style.background = hex;
-				const checkKey = `use${type.charAt(0).toUpperCase() + type.slice(1)}`;
-				r[checkKey] = true;
-				if ($(`${checkKey}-${i}`)) $(`${checkKey}-${i}`).checked = true;
-			});
-		}
-
-		function applyShuffleHues() {
-			rangeSettings.forEach((r, i) => {
-				['start', 'mid', 'end'].forEach(type => {
-					const rgb = hexToRgb(r[`${type}Col`]);
-					const hsv = rgbToHsv(rgb.r, rgb.g, rgb.b);
-					const newHex = rgbToHex(hsvToRgb(Math.random(), hsv.s, hsv.v).r, hsvToRgb(Math.random(), hsv.s, hsv.v).g, hsvToRgb(Math.random(), hsv.s, hsv.v).b);
-					r[`${type}Col`] = newHex; if ($(`${type}Preview-${i}`)) $(`${type}Preview-${i}`).style.background = newHex;
+				{ s: 190, e: 199, n: '190s' }, 
+				// { s: 200, e: 255, n: '200-255' }
+				];
+				petzRanges.forEach((r, i) => {
+					const row = document.createElement('div');
+					row.className = 'range-row';
+					row.innerHTML = `
+		<input type="checkbox" id="rand-${i}">
+		<span class="range-label" onclick="selectIndices('range', [${r.s}, ${r.e}])">${r.n}</span>
+		<div class="anchor-box"><input type="checkbox" id="useStart-${i}"><div id="startPreview-${i}" class="color-trigger" style="background:#fff"></div></div>
+		<div class="anchor-box"><input type="checkbox" id="useMid-${i}"><div id="midPreview-${i}" class="color-trigger" style="background:#888"></div></div>
+		<div class="anchor-box"><input type="checkbox" id="useEnd-${i}"><div id="endPreview-${i}" class="color-trigger" style="background:#000"></div></div>
+	`;
+					container.appendChild(row);
+					rangeSettings.push({ ...r, randomize: false, useStart: false, useMid: false, useEnd: false, startCol: "#ffffff", midCol: "#888888", endCol: "#000000" });
+					$(`startPreview-${i}`).onclick = (e) => triggerAnchorPicker(e, i, 'start');
+					$(`midPreview-${i}`).onclick = (e) => triggerAnchorPicker(e, i, 'mid');
+					$(`endPreview-${i}`).onclick = (e) => triggerAnchorPicker(e, i, 'end');
+					const bind = (id, key) => $(id).onchange = e => rangeSettings[i][key] = e.target.checked;
+					bind(`rand-${i}`, 'randomize'); bind(`useStart-${i}`, 'useStart'); bind(`useMid-${i}`, 'useMid'); bind(`useEnd-${i}`, 'useEnd');
 				});
-			});
-		}
-
-		function refreshLabAnchors() {
-			rangeSettings.forEach((r, i) => {
-				const start = activePalette[r.s], end = activePalette[r.e], mid = activePalette[Math.floor((r.s + r.e) / 2)];
-				r.startCol = rgbToHex(start[0], start[1], start[2]); r.midCol = rgbToHex(mid[0], mid[1], mid[2]); r.endCol = rgbToHex(end[0], end[1], end[2]);
-				if ($(`startPreview-${i}`)) $(`startPreview-${i}`).style.background = r.startCol;
-				if ($(`midPreview-${i}`)) $(`midPreview-${i}`).style.background = r.midCol;
-				if ($(`endPreview-${i}`)) $(`endPreview-${i}`).style.background = r.endCol;
-			});
-		}
-
-		function generatePalette(overwrite) {
-			const logic = $('rampLogic').value;
-			const targetPal = overwrite ? activePalette : JSON.parse(JSON.stringify(activePalette));
-			let changed = false;
-			rangeSettings.forEach(range => {
-				if (!range.randomize) return;
-				changed = true;
-				const count = range.e - range.s + 1;
-				if (logic === 'random-chaos') { for (let i = 0; i < count; i++) targetPal[range.s + i] = [Math.random() * 255, Math.random() * 255, Math.random() * 255]; return; }
-				let start = range.useStart ? hexToRgb(range.startCol) : hsvToRgb(Math.random(), 0.6, (logic === 'dark-light' ? 0.2 : 0.9));
-				let end = range.useEnd ? hexToRgb(range.endCol) : hsvToRgb(Math.random(), 0.7, (logic === 'dark-light' ? 0.9 : 0.2));
-				let mid = range.useMid ? hexToRgb(range.midCol) : null;
-				for (let i = 0; i < count; i++) {
-					const t = count > 1 ? i / (count - 1) : 0; let color;
-					if (mid && t <= 0.5) color = lerp(start, mid, t * 2);
-					else if (mid && t > 0.5) color = lerp(mid, end, (t - 0.5) * 2);
-					else color = lerp(start, end, t);
-					if (logic === 'saturated') { const h = rgbToHsv(color.r, color.g, color.b); color = hsvToRgb(h.h, 0.95, h.v); }
-					if (logic === 'vibrant-shift') { const h = rgbToHsv(color.r, color.g, color.b); color = hsvToRgb((h.h + (t * 0.1)) % 1, h.s, h.v); }
-					targetPal[range.s + i] = [color.r, color.g, color.b];
-				}
-			});
-			if (!changed) return alert("Select 'Rand' for at least one range.");
-			if (!overwrite) {
-				const name = "Gen-" + new Date().toLocaleTimeString();
-				loadedPalettes[name] = targetPal;
-				updatePaletteSelect(); $('paletteSelect').value = name;
+				refreshLabAnchors();
 			}
-			activePalette = targetPal; originalPalBeforeHue = null; saveActiveToMemory(); renderSwatchGrid(); refreshLabAnchors(); 
-			// updatePaletteCode();
-		}
-		function lerp(a, b, t) { return { r: Math.round(a.r + (b.r - a.r) * t), g: Math.round(a.g + (b.g - a.g) * t), b: Math.round(a.b + (b.b - a.b) * t) }; }
-
-		// Import Colors
-		async function handleSeedUpload() {
-			const file = $('seedFileInput').files[0];
-			if (!file) return alert("Select file.");
-			const ext = file.name.split('.').pop().toLowerCase();
-			const pool = $('seedPool'); pool.innerHTML = 'Reading...';
-			seedColors = [];
-
-			if (ext === 'json') {
-				try {
-					const text = await file.text();
-					const obj = JSON.parse(text);
-					(Array.isArray(obj) ? obj : []).forEach(item => { if (item.Hex) seedColors.push(item.Hex); });
-				} catch (e) { alert("Invalid JSON."); }
-			} else if (ext === 'act' || ext === 'pal') {
-				const buf = await file.arrayBuffer();
-				const bytes = new Uint8Array(buf);
-				if (bytes.length >= 768) {
-					for (let i = 0; i < 768; i += 3) {
-						seedColors.push(rgbToHex(bytes[i], bytes[i + 1], bytes[i + 2]));
-						if (seedColors.length >= 64) break;
+			
+			function triggerAnchorPicker(e, idx, type) {
+				const rect = e.target.getBoundingClientRect();
+				const key = `${type}Col`;
+				openColorPopup(`Ramp Anchor`, rangeSettings[idx][key], rect.left + window.scrollX, rect.top + window.scrollY, (hex) => {
+					rangeSettings[idx][key] = hex;
+					$(`${type}Preview-${idx}`).style.background = hex;
+					const checkKey = `use${type.charAt(0).toUpperCase() + type.slice(1)}`;
+					rangeSettings[idx][checkKey] = true;
+					if ($(`${checkKey}-${idx}`)) $(`${checkKey}-${idx}`).checked = true;
+				});
+			}
+			
+			function toggleAnchorColumn(type, checked) {
+				const key = `use${type}`;
+				rangeSettings.forEach((r, i) => {
+					r[key] = checked;
+					const checkbox = $(`${key}-${i}`);
+					if (checkbox) {
+						checkbox.checked = checked;
+					}
+				});
+			}
+			
+			function clearAnchorCheckboxes(type) {
+				const key = `use${type.charAt(0).toUpperCase() + type.slice(1)}`;
+				rangeSettings.forEach((r, i) => { r[key] = false; if ($(`${key}-${i}`)) $(`${key}-${i}`).checked = false; });
+			}
+			
+			function toggleMasterRand(checked) {
+				rangeSettings.forEach((r, i) => { r.randomize = checked; if ($(`rand-${i}`)) $(`rand-${i}`).checked = checked; });
+			}
+			
+			function applyMaster(type) {
+				const hex = globalPickerColors[`master${type.charAt(0).toUpperCase() + type.slice(1)}`];
+				rangeSettings.forEach((r, i) => {
+					r[`${type}Col`] = hex;
+					if ($(`${type}Preview-${i}`)) $(`${type}Preview-${i}`).style.background = hex;
+					const checkKey = `use${type.charAt(0).toUpperCase() + type.slice(1)}`;
+					r[checkKey] = true;
+					if ($(`${checkKey}-${i}`)) $(`${checkKey}-${i}`).checked = true;
+				});
+			}
+			
+			function applyShuffleHues() {
+				rangeSettings.forEach((r, i) => {
+					['start', 'mid', 'end'].forEach(type => {
+						const rgb = hexToRgb(r[`${type}Col`]);
+						const hsv = rgbToHsv(rgb.r, rgb.g, rgb.b);
+						const newHex = rgbToHex(hsvToRgb(Math.random(), hsv.s, hsv.v).r, hsvToRgb(Math.random(), hsv.s, hsv.v).g, hsvToRgb(Math.random(), hsv.s, hsv.v).b);
+						r[`${type}Col`] = newHex; if ($(`${type}Preview-${i}`)) $(`${type}Preview-${i}`).style.background = newHex;
+					});
+				});
+			}
+			
+			function refreshLabAnchors() {
+				rangeSettings.forEach((r, i) => {
+					const start = activePalette[r.s], end = activePalette[r.e], mid = activePalette[Math.floor((r.s + r.e) / 2)];
+					r.startCol = rgbToHex(start[0], start[1], start[2]); r.midCol = rgbToHex(mid[0], mid[1], mid[2]); r.endCol = rgbToHex(end[0], end[1], end[2]);
+					if ($(`startPreview-${i}`)) $(`startPreview-${i}`).style.background = r.startCol;
+					if ($(`midPreview-${i}`)) $(`midPreview-${i}`).style.background = r.midCol;
+					if ($(`endPreview-${i}`)) $(`endPreview-${i}`).style.background = r.endCol;
+				});
+			}
+			
+			function generatePalette(overwrite) {
+				const logic = $('rampLogic').value;
+				const targetPal = overwrite ? activePalette : JSON.parse(JSON.stringify(activePalette));
+				let changed = false;
+				rangeSettings.forEach(range => {
+					if (!range.randomize) return;
+					changed = true;
+					const count = range.e - range.s + 1;
+					if (logic === 'random-chaos') { for (let i = 0; i < count; i++) targetPal[range.s + i] = [Math.random() * 255, Math.random() * 255, Math.random() * 255]; return; }
+					let start = range.useStart ? hexToRgb(range.startCol) : hsvToRgb(Math.random(), 0.6, (logic === 'dark-light' ? 0.2 : 0.9));
+					let end = range.useEnd ? hexToRgb(range.endCol) : hsvToRgb(Math.random(), 0.7, (logic === 'dark-light' ? 0.9 : 0.2));
+					let mid = range.useMid ? hexToRgb(range.midCol) : null;
+					for (let i = 0; i < count; i++) {
+						const t = count > 1 ? i / (count - 1) : 0; let color;
+						if (mid && t <= 0.5) color = lerp(start, mid, t * 2);
+						else if (mid && t > 0.5) color = lerp(mid, end, (t - 0.5) * 2);
+						else color = lerp(start, end, t);
+						if (logic === 'saturated') { const h = rgbToHsv(color.r, color.g, color.b); color = hsvToRgb(h.h, 0.95, h.v); }
+						if (logic === 'vibrant-shift') { const h = rgbToHsv(color.r, color.g, color.b); color = hsvToRgb((h.h + (t * 0.1)) % 1, h.s, h.v); }
+						targetPal[range.s + i] = [color.r, color.g, color.b];
+					}
+				});
+				if (!changed) return alert("Select 'Rand' for at least one range.");
+				if (!overwrite) {
+					const name = "Gen-" + new Date().toLocaleTimeString();
+					loadedPalettes[name] = targetPal;
+					updatePaletteSelect(); $('paletteSelect').value = name;
+				}
+				activePalette = targetPal; originalPalBeforeHue = null; saveActiveToMemory(); renderSwatchGrid(); refreshLabAnchors(); 
+				// updatePaletteCode();
+			}
+			function lerp(a, b, t) { return { r: Math.round(a.r + (b.r - a.r) * t), g: Math.round(a.g + (b.g - a.g) * t), b: Math.round(a.b + (b.b - a.b) * t) }; }
+			
+			// Import Colors
+			async function handleSeedUpload() {
+				const file = $('seedFileInput').files[0];
+				if (!file) return alert("Select file.");
+				const ext = file.name.split('.').pop().toLowerCase();
+				const pool = $('seedPool'); pool.innerHTML = 'Reading...';
+				seedColors = [];
+				
+				if (ext === 'json') {
+					try {
+						const text = await file.text();
+						const obj = JSON.parse(text);
+						(Array.isArray(obj) ? obj : []).forEach(item => { if (item.Hex) seedColors.push(item.Hex); });
+					} catch (e) { alert("Invalid JSON."); }
+				} else if (ext === 'act' || ext === 'pal') {
+					const buf = await file.arrayBuffer();
+					const bytes = new Uint8Array(buf);
+					if (bytes.length >= 768) {
+						for (let i = 0; i < 768; i += 3) {
+							seedColors.push(rgbToHex(bytes[i], bytes[i + 1], bytes[i + 2]));
+							if (seedColors.length >= 64) break;
+						}
 					}
 				}
+				
+				pool.innerHTML = '';
+				if (!seedColors.length) { pool.innerHTML = '<span class="note" style="color:#f44336">None found.</span>'; $('pushSeeds').disabled = true; }
+				else {
+					seedColors.forEach(c => {
+						const d = document.createElement('div'); d.className = 'seed-swatch'; d.style.background = c; d.title = c; pool.appendChild(d);
+					});
+					$('pushSeeds').disabled = false;
+				}
 			}
-
-			pool.innerHTML = '';
-			if (!seedColors.length) { pool.innerHTML = '<span class="note" style="color:#f44336">None found.</span>'; $('pushSeeds').disabled = true; }
-			else {
-				seedColors.forEach(c => {
-					const d = document.createElement('div'); d.className = 'seed-swatch'; d.style.background = c; d.title = c; pool.appendChild(d);
+			
+			function pushSeedsToLab() {
+				if (!seedColors.length) return;
+				rangeSettings.forEach((r, i) => {
+					['start', 'mid', 'end'].forEach(type => {
+						const c = seedColors[Math.floor(Math.random() * seedColors.length)];
+						r[`${type}Col`] = c;
+						
+						// FIX: Reference 'Preview' instead of 'Col' to match the HTML
+						const previewEl = $(`${type}Preview-${i}`);
+						if (previewEl) previewEl.style.background = c;
+						
+						r[`use${type.charAt(0).toUpperCase() + type.slice(1)}`] = true;
+						
+						const checkbox = $(`use${type.charAt(0).toUpperCase() + type.slice(1)}-${i}`);
+						if (checkbox) checkbox.checked = true;
+					});
 				});
-				$('pushSeeds').disabled = false;
+				//alert("Seeds pushed!");
 			}
-		}
-
-		function pushSeedsToLab() {
-			if (!seedColors.length) return;
-			rangeSettings.forEach((r, i) => {
-				['start', 'mid', 'end'].forEach(type => {
-					const c = seedColors[Math.floor(Math.random() * seedColors.length)];
-					r[`${type}Col`] = c;
-
-					// FIX: Reference 'Preview' instead of 'Col' to match the HTML
-					const previewEl = $(`${type}Preview-${i}`);
-					if (previewEl) previewEl.style.background = c;
-
-					r[`use${type.charAt(0).toUpperCase() + type.slice(1)}`] = true;
-
-					const checkbox = $(`use${type.charAt(0).toUpperCase() + type.slice(1)}-${i}`);
-					if (checkbox) checkbox.checked = true;
+			
+			// Icon Repaletter
+			async function getIconImageData() {
+				const file = $('iconInput').files[0];
+				if (!file) return null;
+				return new Promise(r => {
+					const reader = new FileReader();
+					reader.onload = e => {
+						const i = new Image(); i.onload = () => {
+							const c = document.createElement('canvas'); c.width = i.width; c.height = i.height;
+							const ctx = c.getContext('2d'); ctx.drawImage(i, 0, 0);
+							r({ img: i, data: ctx.getImageData(0, 0, c.width, c.height) });
+						}; i.src = e.target.result;
+					}; reader.readAsDataURL(file);
 				});
-			});
-			//alert("Seeds pushed!");
-		}
-
-		// Dither & Match
-		function renderDitherPreview() {
+			}
+			
+			async function previewIcon() {
+				const icon = await getIconImageData();
+				if (!icon) return;
+				
+				const srcPal = loadedPalettes[$('iconSrcPal').value];
+				const tgtPal = loadedPalettes[$('iconTgtPal').value];
+				const { data, img } = icon;
+				
+				const canvases = [$('iconPrevBefore'), $('iconPrevAfter')];
+				canvases.forEach(c => { c.width = img.width; c.height = img.height; });
+				
+				// Render "Before" (just the original image pixels)
+				$('iconPrevBefore').getContext('2d').putImageData(data, 0, 0);
+				
+				// Calculate indices and render "After"
+				const ctxAfter = $('iconPrevAfter').getContext('2d');
+				const outData = ctxAfter.createImageData(img.width, img.height);
+				
+				for (let i = 0; i < data.data.length; i += 4) {
+					const r = data.data[i], g = data.data[i + 1], b = data.data[i + 2], a = data.data[i + 3];
+					if (a < 128) { // Transparency
+						outData.data[i + 3] = 0; continue;
+					}
+					let bestIdx = 0, bestDist = Infinity;
+					for (let j = 0; j < 256; j++) {
+						const d = Math.pow(r - srcPal[j][0], 2) + Math.pow(g - srcPal[j][1], 2) + Math.pow(b - srcPal[j][2], 2);
+						if (d < bestDist) { bestDist = d; bestIdx = j; }
+					}
+					outData.data[i] = tgtPal[bestIdx][0];
+					outData.data[i + 1] = tgtPal[bestIdx][1];
+					outData.data[i + 2] = tgtPal[bestIdx][2];
+					outData.data[i + 3] = 255;
+				}
+				ctxAfter.putImageData(outData, 0, 0);
+			}
+			
+			async function repaletteIcon() {
+				const icon = await getIconImageData();
+				if (!icon) return alert("Upload an icon image first!");
+				
+				const srcPal = loadedPalettes[$('iconSrcPal').value];
+				const tgtPal = loadedPalettes[$('iconTgtPal').value];
+				const { data, img } = icon;
+				
+				const indices = new Uint8Array(img.width * img.height);
+				for (let i = 0; i < data.data.length; i += 4) {
+					const r = data.data[i], g = data.data[i + 1], b = data.data[i + 2], a = data.data[i + 3];
+					if (a < 128) { indices[i / 4] = 0; continue; }
+					let bestIdx = 0, bestDist = Infinity;
+					for (let j = 0; j < 256; j++) {
+						const d = Math.pow(r - srcPal[j][0], 2) + Math.pow(g - srcPal[j][1], 2) + Math.pow(b - srcPal[j][2], 2);
+						if (d < bestDist) { bestDist = d; bestIdx = j; }
+					}
+					indices[i / 4] = bestIdx;
+				}
+				
+				const buffer = generateIndexedBmp(img.width, img.height, indices, tgtPal);
+				const a = document.createElement('a');
+				a.href = URL.createObjectURL(new Blob([buffer], { type: 'image/bmp' }));
+				a.download = `icon_${$('iconTgtPal').value}.bmp`;
+				a.click();
+			}
+			
+			// Dither & Match
+			function renderDitherPreview() {
 				const i1 = parseInt($('ditherIdx1').value) % 256;
 				const i2 = parseInt($('ditherIdx2').value) % 256;
 				const pat = $('ditherPattern').value;
@@ -1525,26 +1650,26 @@
 				const ctx = $('ditherCanvas').getContext('2d');
 				const w = 32, h = 32;
 				const id = ctx.createImageData(w, h);
-
+				
 				if (pat === 'fs') {
 					// Floyd-Steinberg approximation of a target color using two indices
 					const target = hexToRgb($('targetColor').value) || { r: 128, g: 128, b: 128 };
 					let pixels = new Float32Array(w * h * 3);
 					for (let i = 0; i < w * h; i++) { pixels[i * 3] = target.r; pixels[i * 3 + 1] = target.g; pixels[i * 3 + 2] = target.b; }
-
+					
 					for (let y = 0; y < h; y++) {
 						for (let x = 0; x < w; x++) {
 							let pIdx = (y * w + x) * 3;
 							let r = pixels[pIdx], g = pixels[pIdx + 1], b = pixels[pIdx + 2];
-
+							
 							let d1 = Math.pow(r - activePalette[i1][0], 2) + Math.pow(g - activePalette[i1][1], 2) + Math.pow(b - activePalette[i1][2], 2);
 							let d2 = Math.pow(r - activePalette[i2][0], 2) + Math.pow(g - activePalette[i2][1], 2) + Math.pow(b - activePalette[i2][2], 2);
 							let best = d1 < d2 ? i1 : i2;
 							let nr = activePalette[best][0], ng = activePalette[best][1], nb = activePalette[best][2];
-
+							
 							let outIdx = (y * w + x) * 4;
 							id.data[outIdx] = nr; id.data[outIdx + 1] = ng; id.data[outIdx + 2] = nb; id.data[outIdx + 3] = 255;
-
+							
 							let er = r - nr, eg = g - ng, eb = b - nb;
 							const dist = (dx, dy, weight) => {
 								if (x + dx >= 0 && x + dx < w && y + dy < h) {
@@ -1565,7 +1690,7 @@
 						else if (pat === 'h-stripes') use1 = y % 2 === 0;
 						else if (pat === 'noise') use1 = Math.random() > level;
 						else if (pat === 'bayer') use1 = (bayer4[y % 4][x % 4] / 16) > level;
-
+						
 						const idx = use1 ? i1 : i2;
 						const rgb = activePalette[idx];
 						id.data[i * 4] = rgb[0]; id.data[i * 4 + 1] = rgb[1]; id.data[i * 4 + 2] = rgb[2]; id.data[i * 4 + 3] = 255;
@@ -1573,252 +1698,287 @@
 				}
 				ctx.putImageData(id, 0, 0);
 			}
-
-		function findMatch() {
-			const t = hexToRgb($('targetColor').value); let bIdx = 0, bD = Infinity;
-			activePalette.forEach((rgb, i) => {
-				const d = Math.pow(t.r - rgb[0], 2) + Math.pow(t.g - rgb[1], 2) + Math.pow(t.b - rgb[2], 2); if (d < bD) { bD = d; bIdx = i; }
-			});
-			let bP = [0, 0], bPD = Infinity;
-			for (let i = 0; i < 256; i++) for (let j = i; j < 256; j++) {
-				const avgCol = { r: (activePalette[i][0] + activePalette[j][0]) / 2, g: (activePalette[i][1] + activePalette[j][1]) / 2, b: (activePalette[i][2] + activePalette[j][2]) / 2 };
-				const d = Math.pow(t.r - avgCol.r, 2) + Math.pow(t.g - avgCol.g, 2) + Math.pow(t.b - avgCol.b, 2); if (d < bPD) { bPD = d; bP = [i, j]; }
-			}
-			$('ditherIdx1').value = bP[0]; $('ditherIdx2').value = bP[1]; renderDitherPreview();
-			$('matchOutput').innerHTML = `Best Single: #${bIdx} <div class="seed-swatch" style="background:rgb(${activePalette[bIdx].join(',')})"></div><br>Best Dither: #${bP[0]} + #${bP[1]}`;
-		}
-
-		// function findMatch(mode) {
-		// 		const target = hexToRgb($('targetColor').value);
-		// 		if (mode === 'fs') {
-		// 			let dists = activePalette.map((rgb, i) => ({
-		// 				i, d: Math.pow(target.r - rgb[0], 2) + Math.pow(target.g - rgb[1], 2) + Math.pow(target.b - rgb[2], 2)
-		// 			})).sort((a, b) => a.d - b.d);
-		// 			$('ditherIdx1').value = dists[0].i;
-		// 			$('ditherIdx2').value = dists[1].i;
-		// 			$('ditherPattern').value = 'fs';
-		// 			renderDitherPreview();
-		// 			$('matchOutput').innerHTML = `FS Dither: Indices #${dists[0].i} & #${dists[1].i}`;
-		// 		} else {
-		// 			let bIdx = 0, bD = Infinity;
-		// 			activePalette.forEach((rgb, i) => {
-		// 				const d = Math.pow(target.r - rgb[0], 2) + Math.pow(target.g - rgb[1], 2) + Math.pow(target.b - rgb[2], 2);
-		// 				if (d < bD) { bD = d; bIdx = i; }
-		// 			});
-		// 			$('matchOutput').innerHTML = `Best Single: #${bIdx}`;
-		// 		}
-		// 	}
-
-		// Image Processing
-		const readImg = f => new Promise(r => { const fr = new FileReader(); fr.onload = e => { const i = new Image(); i.onload = () => r(i); i.src = e.target.result; }; fr.readAsDataURL(f); });
-		$('imgDir').onchange = async e => {
-			const container = $('inputImgThumbs'); container.innerHTML = ''; container.classList.remove('hidden');
-			let c = 0;
-			for (const f of e.target.files) {
-				if (f.name.endsWith('.png')) {
-					const img = await readImg(f); const thumb = new Image(); thumb.src = img.src; container.appendChild(thumb);
-					if (++c >= 15) break;
-				}
-			}
-		};
-
-		$('run').onclick = async () => {
-			const imgs = Array.from($('imgDir').files).filter(f => f.name.endsWith('.png')); if (!imgs.length) return alert("Select PNG images.");
-			const allPals = Object.keys(loadedPalettes);
-			cachedImageGroups = {}; $('previewContainer').innerHTML = 'Processing...'; $('links').innerHTML = '';
-			for (const imgF of imgs) {
-				const img = await readImg(imgF); cachedImageGroups[imgF.name] = [];
-				const indexed = indexify(img, activePalette);
-				for (const pName of allPals) {
-					const pal = loadedPalettes[pName]; const cv = applyPal(indexed, pal);
-					const blob = await new Promise(r => cv.toBlob(r, 'image/png')); const url = URL.createObjectURL(blob);
-					const a = document.createElement('a'); a.href = url; a.download = `${pName}_${imgF.name}`; a.className = 'dl-link'; $('links').appendChild(a);
-					cachedImageGroups[imgF.name].push({ pName, url, metrics: getMetrics(cv) });
-				}
-			}
-			renderGroups(); $('downloadAll').style.display = 'block';
-		};
-
-		function indexify(img, bp) {
-			const c = document.createElement('canvas'); c.width = img.width; c.height = img.height; const ctx = c.getContext('2d'); ctx.drawImage(img, 0, 0);
-			const d = ctx.getImageData(0, 0, c.width, c.height).data, idx = [], alpha = [];
-			for (let i = 0; i < d.length; i += 4) {
-				let b = 0, m = Infinity; for (let j = 0; j < 256; j++) {
-					const dist = Math.pow(d[i] - bp[j][0], 2) + Math.pow(d[i + 1] - bp[j][1], 2) + Math.pow(d[i + 2] - bp[j][2], 2);
-					if (dist < m) { m = dist; b = j; }
-				}
-				idx.push(b); alpha.push(d[i + 3]);
-			}
-			return { w: c.width, h: c.height, idx, alpha };
-		}
-
-		function applyPal(data, pal) {
-			const c = document.createElement('canvas'); c.width = data.w; c.height = data.h; const ctx = c.getContext('2d'), id = ctx.createImageData(c.width, c.height);
-			data.idx.forEach((v, i) => { const p = i * 4; id.data[p] = pal[v][0]; id.data[p + 1] = pal[v][1]; id.data[p + 2] = pal[v][2]; id.data[p + 3] = data.alpha[i]; });
-			ctx.putImageData(id, 0, 0); return c;
-		}
-
-		function getMetrics(cv) {
-			const data = cv.getContext('2d').getImageData(0, 0, cv.width, cv.height).data;
-			const hues = [], sats = [], vals = [];
-			for (let i = 0; i < data.length; i += 4) { if (data[i + 3] < 128) continue; const h = rgbToHsv(data[i], data[i + 1], data[i + 2]); hues.push(h.h * 360); sats.push(h.s); vals.push(h.v); }
-			return { meanHue: avg(hues), medianHue: median(hues), meanSat: avg(sats), meanVal: avg(vals), warmness: avg(hues.map(h => h < 180 ? h : 360 - h)) };
-		}
-
-		function renderGroups() {
-			const container = $('previewContainer'); container.innerHTML = '';
-			const sort = $('sortOption').value;
-			const keyMap = { meanhue: 'meanHue', medianhue: 'medianHue', darktolight: 'meanVal', mutedtovivid: 'meanSat', warmness: 'warmness' };
-
-			for (const [imgName, items] of Object.entries(cachedImageGroups)) {
-				const group = document.createElement('div'); group.className = 'preview-group';
-				const h = document.createElement('h4'); h.textContent = `▾ ${imgName}`; group.appendChild(h);
-				const grid = document.createElement('div'); grid.className = 'preview-grid';
-				h.onclick = () => grid.style.display = grid.style.display === 'none' ? 'flex' : 'none';
-
-				if (keyMap[sort]) items.sort((a, b) => a.metrics[keyMap[sort]] - b.metrics[keyMap[sort]]);
-				else items.sort((a, b) => a.pName.localeCompare(b.pName));
-
-				items.forEach(item => {
-					const div = document.createElement('div'); div.className = 'preview-item';
-					const img = new Image(); img.src = item.url;
-					img.onclick = () => {
-						const isEnlarged = img.classList.contains('enlarged');
-						document.querySelectorAll('.preview-item img.enlarged').forEach(el => el.classList.remove('enlarged'));
-						if (!isEnlarged) img.classList.add('enlarged');
-					};
-					div.innerHTML = `<p>${item.pName}</p>`; div.insertBefore(img, div.firstChild);
-					const cb = document.createElement('input'); cb.type = 'checkbox'; cb.checked = selectedPals.has(item.pName);
-					cb.onchange = e => { e.target.checked ? selectedPals.add(item.pName) : selectedPals.delete(item.pName); updateSelectionOutput(); };
-					div.appendChild(cb); grid.appendChild(div);
+			
+			function findMatch() {
+				const t = hexToRgb($('targetColor').value); let bIdx = 0, bD = Infinity;
+				activePalette.forEach((rgb, i) => {
+					const d = Math.pow(t.r - rgb[0], 2) + Math.pow(t.g - rgb[1], 2) + Math.pow(t.b - rgb[2], 2); if (d < bD) { bD = d; bIdx = i; }
 				});
-				group.appendChild(grid); container.appendChild(group);
-			}
-		}
-
-		function updateSelectionOutput() { $('palOut').value = Array.from(selectedPals).join('\n'); }
-		$('sortOption').onchange = renderGroups;
-		$('downloadAll').onclick = () => document.querySelectorAll('#links a.dl').forEach(a => a.click());
-
-
-		function downloadAllGenerated() {
-			const links = document.querySelectorAll('.dl-link');
-			links.forEach((link, i) => {
-				setTimeout(() => link.click(), i * 150);
-			});
-		}
-
-		// File Input & Output
-		async function parsePal(f) {
-			const b = await f.arrayBuffer(), bytes = new Uint8Array(b), ext = f.name.split('.').pop().toLowerCase(); let p = [];
-			if (ext === 'act' || ext === 'pal') { if (bytes.length < 768) return null; for (let i = 0; i < 768; i += 3) p.push([bytes[i], bytes[i + 1], bytes[i + 2]]); }
-			else if (ext === 'bmp') { const o = 54; if (bytes.length < o + 1024) return null; for (let i = 0; i < 1024; i += 4) p.push([bytes[o + i + 2], bytes[o + i + 1], bytes[o + i]]); }
-			else if (ext === 'png') {
-				let offset = 8; while (offset < bytes.length) {
-					const len = (bytes[offset] << 24) | (bytes[offset + 1] << 16) | (bytes[offset + 2] << 8) | bytes[offset + 3];
-					if (String.fromCharCode(...bytes.slice(offset + 4, offset + 8)) === 'PLTE') { for (let i = offset + 8; i < offset + 8 + len; i += 3) p.push([bytes[i], bytes[i + 1], bytes[i + 2]]); break; }
-					offset += 8 + len + 4;
+				let bP = [0, 0], bPD = Infinity;
+				for (let i = 0; i < 256; i++) for (let j = i; j < 256; j++) {
+					const avgCol = { r: (activePalette[i][0] + activePalette[j][0]) / 2, g: (activePalette[i][1] + activePalette[j][1]) / 2, b: (activePalette[i][2] + activePalette[j][2]) / 2 };
+					const d = Math.pow(t.r - avgCol.r, 2) + Math.pow(t.g - avgCol.g, 2) + Math.pow(t.b - avgCol.b, 2); if (d < bPD) { bPD = d; bP = [i, j]; }
 				}
+				$('ditherIdx1').value = bP[0]; $('ditherIdx2').value = bP[1]; renderDitherPreview();
+				$('matchOutput').innerHTML = `Best Single: #${bIdx} <div class="seed-swatch" style="background:rgb(${activePalette[bIdx].join(',')})"></div><br>Best Dither: #${bP[0]} + #${bP[1]}`;
 			}
-			return p.length >= 256 ? p.slice(0, 256) : null;
-		}
-
-		$('palDir').onchange = async e => {
-			let count = 0;
-			for (const f of e.target.files) { const p = await parsePal(f); if (p) { loadedPalettes[f.name.replace(/\.[^.]+$/, '')] = p; count++; } }
-			updatePaletteSelect(); $('palSummary').textContent = `${count} external palettes loaded.`;
-		};
-
-		function downloadPaletteBmp() {
-			const indices = new Uint8Array(256); for (let i = 0; i < 256; i++) indices[i] = i;
-			const row = Math.floor((8 * 256 + 31) / 32) * 4, pxSize = row * 1, fSize = 54 + 1024 + pxSize, buf = new ArrayBuffer(fSize), v = new DataView(buf);
-			v.setUint16(0, 0x4D42, true); v.setUint32(2, fSize, true); v.setUint32(10, 1078, true); v.setUint32(14, 40, true); v.setUint32(18, 256, true); v.setUint32(22, 1, true); v.setUint16(26, 1, true); v.setUint16(28, 8, true); v.setUint32(34, pxSize, true); v.setUint32(46, 256, true);
-			for (let i = 0; i < 256; i++) { const rgb = activePalette[i]; v.setUint8(54 + i * 4, rgb[2]); v.setUint8(55 + i * 4, rgb[1]); v.setUint8(56 + i * 4, rgb[0]); }
-			for (let x = 0; x < 256; x++) v.setUint8(1078 + x, indices[x]);
-			const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([buf], { type: 'image/bmp' }));
-			const palName = $('paletteSelect').value || 'palette';
-			a.download = `${palName}.bmp`;
-			a.click();
-		}
-
-		function downloadPalettePng() {
-			const c = document.createElement('canvas'); c.width = 256; c.height = 1; const ctx = c.getContext('2d'), id = ctx.createImageData(256, 1);
-			for (let i = 0; i < 256; i++) { const p = i * 4; id.data[p] = activePalette[i][0]; id.data[p + 1] = activePalette[i][1]; id.data[p + 2] = activePalette[i][2]; id.data[p + 3] = 255; }
-			ctx.putImageData(id, 0, 0); c.toBlob(b => {
-				const a = document.createElement('a'); a.href = URL.createObjectURL(b);
-				const palName = $('paletteSelect').value || 'palette';
-				a.download = `${palName}.png`;
-				a.click();
-			});
-		}
-
-		const sleep = ms => new Promise(r => setTimeout(r, ms));
-
-		async function downloadAllPaletteSwatches() {
-			for (const [name, pal] of Object.entries(loadedPalettes)) {
-				if (!pal || pal.length !== 256) continue;
-
-				const canvas = document.createElement('canvas');
-				canvas.width = 256;
-				canvas.height = 1;
-				const ctx = canvas.getContext('2d');
-				const imgData = ctx.createImageData(256, 1);
-
+			
+			// function findMatch(mode) {
+			// 		const target = hexToRgb($('targetColor').value);
+			// 		if (mode === 'fs') {
+			// 			let dists = activePalette.map((rgb, i) => ({
+			// 				i, d: Math.pow(target.r - rgb[0], 2) + Math.pow(target.g - rgb[1], 2) + Math.pow(target.b - rgb[2], 2)
+			// 			})).sort((a, b) => a.d - b.d);
+			// 			$('ditherIdx1').value = dists[0].i;
+			// 			$('ditherIdx2').value = dists[1].i;
+			// 			$('ditherPattern').value = 'fs';
+			// 			renderDitherPreview();
+			// 			$('matchOutput').innerHTML = `FS Dither: Indices #${dists[0].i} & #${dists[1].i}`;
+			// 		} else {
+			// 			let bIdx = 0, bD = Infinity;
+			// 			activePalette.forEach((rgb, i) => {
+			// 				const d = Math.pow(target.r - rgb[0], 2) + Math.pow(target.g - rgb[1], 2) + Math.pow(target.b - rgb[2], 2);
+			// 				if (d < bD) { bD = d; bIdx = i; }
+			// 			});
+			// 			$('matchOutput').innerHTML = `Best Single: #${bIdx}`;
+			// 		}
+			// 	}
+			
+			// Image Processing
+			const readImg = f => new Promise(r => { const fr = new FileReader(); fr.onload = e => { const i = new Image(); i.onload = () => r(i); i.src = e.target.result; }; fr.readAsDataURL(f); });
+			$('imgDir').onchange = async e => {
+				const container = $('inputImgThumbs'); container.innerHTML = ''; container.classList.remove('hidden');
+				let c = 0;
+				for (const f of e.target.files) {
+					if (f.name.endsWith('.png')) {
+						const img = await readImg(f); const thumb = new Image(); thumb.src = img.src; container.appendChild(thumb);
+						if (++c >= 15) break;
+					}
+				}
+			};
+			
+			$('run').onclick = async () => {
+				const imgs = Array.from($('imgDir').files).filter(f => f.name.endsWith('.png')); if (!imgs.length) return alert("Select PNG images.");
+				const allPals = Object.keys(loadedPalettes);
+				cachedImageGroups = {}; $('previewContainer').innerHTML = 'Processing...'; $('links').innerHTML = '';
+				for (const imgF of imgs) {
+					const img = await readImg(imgF); cachedImageGroups[imgF.name] = [];
+					const indexed = indexify(img, activePalette);
+					for (const pName of allPals) {
+						const pal = loadedPalettes[pName]; const cv = applyPal(indexed, pal);
+						const blob = await new Promise(r => cv.toBlob(r, 'image/png')); const url = URL.createObjectURL(blob);
+						const a = document.createElement('a'); a.href = url; a.download = `${pName}_${imgF.name}`; a.className = 'dl-link'; $('links').appendChild(a);
+						cachedImageGroups[imgF.name].push({ pName, url, metrics: getMetrics(cv) });
+					}
+				}
+				renderGroups(); $('downloadAll').style.display = 'block';
+			};
+			
+			function indexify(img, bp) {
+				const c = document.createElement('canvas'); c.width = img.width; c.height = img.height; const ctx = c.getContext('2d'); ctx.drawImage(img, 0, 0);
+				const d = ctx.getImageData(0, 0, c.width, c.height).data, idx = [], alpha = [];
+				for (let i = 0; i < d.length; i += 4) {
+					let b = 0, m = Infinity; for (let j = 0; j < 256; j++) {
+						const dist = Math.pow(d[i] - bp[j][0], 2) + Math.pow(d[i + 1] - bp[j][1], 2) + Math.pow(d[i + 2] - bp[j][2], 2);
+						if (dist < m) { m = dist; b = j; }
+					}
+					idx.push(b); alpha.push(d[i + 3]);
+				}
+				return { w: c.width, h: c.height, idx, alpha };
+			}
+			
+			function generateIndexedBmp(w, h, indices, palette) {
+				const rowSize = Math.floor((8 * w + 31) / 32) * 4;
+				const pixelArraySize = rowSize * h;
+				const fileSize = 54 + 1024 + pixelArraySize;
+				const buffer = new ArrayBuffer(fileSize), v = new DataView(buffer);
+				
+				v.setUint16(0, 0x4D42, true); v.setUint32(2, fileSize, true); v.setUint32(10, 1078, true);
+				v.setUint32(14, 40, true); v.setUint32(18, w, true); v.setUint32(22, h, true);
+				v.setUint16(26, 1, true); v.setUint16(28, 8, true); v.setUint32(34, pixelArraySize, true); v.setUint32(46, 256, true);
+				
 				for (let i = 0; i < 256; i++) {
-					const [r, g, b] = pal[i];
-					const o = i * 4;
-					imgData.data[o] = r;
-					imgData.data[o + 1] = g;
-					imgData.data[o + 2] = b;
-					imgData.data[o + 3] = 255;
+					const rgb = palette[i] || [0, 0, 0];
+					v.setUint8(54 + i * 4, rgb[2]); v.setUint8(55 + i * 4, rgb[1]); v.setUint8(56 + i * 4, rgb[0]);
 				}
-				ctx.putImageData(imgData, 0, 0);
-
-				const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
-				const a = document.createElement('a');
-				a.href = URL.createObjectURL(blob);
-				a.download = `${name}.png`;
-				a.click();
-
-				await sleep(150);
+				
+				for (let y = 0; y < h; y++) {
+					const off = 1078 + (h - 1 - y) * rowSize;
+					for (let x = 0; x < w; x++) v.setUint8(off + x, indices[y * w + x]);
+				}
+				return buffer;
 			}
-		}
-
-		function downloadDitherBmp() {
-				const i1 = parseInt($('ditherIdx1').value);
-				const i2 = parseInt($('ditherIdx2').value);
-				const level = $('ditherLevel').value;
-				const ctx = $('ditherCanvas').getContext('2d');
-				const id = ctx.getImageData(0, 0, 32, 32);
-				const indices = new Uint8Array(1024);
-
+			
+			function applyPal(data, pal) {
+				const c = document.createElement('canvas'); c.width = data.w; c.height = data.h; const ctx = c.getContext('2d'), id = ctx.createImageData(c.width, c.height);
+				data.idx.forEach((v, i) => { const p = i * 4; id.data[p] = pal[v][0]; id.data[p + 1] = pal[v][1]; id.data[p + 2] = pal[v][2]; id.data[p + 3] = data.alpha[i]; });
+				ctx.putImageData(id, 0, 0); return c;
+			}
+			
+			function getMetrics(cv) {
+				const data = cv.getContext('2d').getImageData(0, 0, cv.width, cv.height).data;
+				const hues = [], sats = [], vals = [];
+				for (let i = 0; i < data.length; i += 4) { if (data[i + 3] < 128) continue; const h = rgbToHsv(data[i], data[i + 1], data[i + 2]); hues.push(h.h * 360); sats.push(h.s); vals.push(h.v); }
+				return { meanHue: avg(hues), medianHue: median(hues), meanSat: avg(sats), meanVal: avg(vals), warmness: avg(hues.map(h => h < 180 ? h : 360 - h)) };
+			}
+			
+			function renderGroups() {
+				const container = $('previewContainer'); container.innerHTML = '';
+				const sort = $('sortOption').value;
+				const keyMap = { meanhue: 'meanHue', medianhue: 'medianHue', darktolight: 'meanVal', mutedtovivid: 'meanSat', warmness: 'warmness' };
+				
+				for (const [imgName, items] of Object.entries(cachedImageGroups)) {
+					const group = document.createElement('div'); group.className = 'preview-group';
+					const h = document.createElement('h4'); h.textContent = `▾ ${imgName}`; group.appendChild(h);
+					const grid = document.createElement('div'); grid.className = 'preview-grid';
+					h.onclick = () => grid.style.display = grid.style.display === 'none' ? 'flex' : 'none';
+					
+					if (keyMap[sort]) items.sort((a, b) => a.metrics[keyMap[sort]] - b.metrics[keyMap[sort]]);
+					else items.sort((a, b) => a.pName.localeCompare(b.pName));
+					
+					items.forEach(item => {
+						const div = document.createElement('div'); div.className = 'preview-item';
+						const img = new Image(); img.src = item.url;
+						img.onclick = () => {
+							const isEnlarged = img.classList.contains('enlarged');
+							document.querySelectorAll('.preview-item img.enlarged').forEach(el => el.classList.remove('enlarged'));
+							if (!isEnlarged) img.classList.add('enlarged');
+						};
+						div.innerHTML = `<p>${item.pName}</p>`; div.insertBefore(img, div.firstChild);
+						const cb = document.createElement('input'); cb.type = 'checkbox'; cb.checked = selectedPals.has(item.pName);
+						cb.onchange = e => { e.target.checked ? selectedPals.add(item.pName) : selectedPals.delete(item.pName); updateSelectionOutput(); };
+						div.appendChild(cb); grid.appendChild(div);
+					});
+					group.appendChild(grid); container.appendChild(group);
+				}
+			}
+			
+			function updateSelectionOutput() { $('palOut').value = Array.from(selectedPals).join('\n'); }
+			$('sortOption').onchange = renderGroups;
+			$('downloadAll').onclick = () => document.querySelectorAll('#links a.dl').forEach(a => a.click());
+			
+			
+			function downloadAllGenerated() {
+				const links = document.querySelectorAll('.dl-link');
+				links.forEach((link, i) => {
+					setTimeout(() => link.click(), i * 150);
+				});
+			}
+			
+			// File Input & Output
+			async function parsePal(f) {
+				const b = await f.arrayBuffer(), bytes = new Uint8Array(b), ext = f.name.split('.').pop().toLowerCase(); let p = [];
+				if (ext === 'act' || ext === 'pal') { if (bytes.length < 768) return null; for (let i = 0; i < 768; i += 3) p.push([bytes[i], bytes[i + 1], bytes[i + 2]]); }
+				else if (ext === 'bmp') { const o = 54; if (bytes.length < o + 1024) return null; for (let i = 0; i < 1024; i += 4) p.push([bytes[o + i + 2], bytes[o + i + 1], bytes[o + i]]); }
+				else if (ext === 'png') {
+					let offset = 8; while (offset < bytes.length) {
+						const len = (bytes[offset] << 24) | (bytes[offset + 1] << 16) | (bytes[offset + 2] << 8) | bytes[offset + 3];
+						if (String.fromCharCode(...bytes.slice(offset + 4, offset + 8)) === 'PLTE') { for (let i = offset + 8; i < offset + 8 + len; i += 3) p.push([bytes[i], bytes[i + 1], bytes[i + 2]]); break; }
+						offset += 8 + len + 4;
+					}
+				}
+				return p.length >= 256 ? p.slice(0, 256) : null;
+			}
+			
+			$('palDir').onchange = async e => {
+				let count = 0;
+				for (const f of e.target.files) { const p = await parsePal(f); if (p) { loadedPalettes[f.name.replace(/\.[^.]+$/, '')] = p; count++; } }
+				updatePaletteSelect(); $('palSummary').textContent = `${count} external palettes loaded.`;
+			};
+			
+			function downloadPaletteBmp() {
+				const indices = new Uint8Array(256); for (let i = 0; i < 256; i++) indices[i] = i;
+				const buffer = generateIndexedBmp(256, 1, indices, activePalette);
+				const a = document.createElement('a');
+				a.href = URL.createObjectURL(new Blob([buffer], { type: 'image/bmp' }));
+				const palName = $('paletteSelect').value || 'palette';
+				a.download = `${palName}.bmp`;
+				a.click();
+			}
+			
+			function downloadPalettePng() {
+				const c = document.createElement('canvas'); c.width = 256; c.height = 1; const ctx = c.getContext('2d'), id = ctx.createImageData(256, 1);
+				for (let i = 0; i < 256; i++) { const p = i * 4; id.data[p] = activePalette[i][0]; id.data[p + 1] = activePalette[i][1]; id.data[p + 2] = activePalette[i][2]; id.data[p + 3] = 255; }
+				ctx.putImageData(id, 0, 0); c.toBlob(b => {
+					const a = document.createElement('a'); a.href = URL.createObjectURL(b);
+					const palName = $('paletteSelect').value || 'palette';
+					a.download = `${palName}.png`;
+					a.click();
+				});
+			}
+			
+			const sleep = ms => new Promise(r => setTimeout(r, ms));
+			
+			async function downloadAllPaletteSwatches() {
+				for (const [name, pal] of Object.entries(loadedPalettes)) {
+					if (!pal || pal.length !== 256) continue;
+					
+					const canvas = document.createElement('canvas');
+					canvas.width = 256;
+					canvas.height = 1;
+					const ctx = canvas.getContext('2d');
+					const imgData = ctx.createImageData(256, 1);
+					
+					for (let i = 0; i < 256; i++) {
+						const [r, g, b] = pal[i];
+						const o = i * 4;
+						imgData.data[o] = r;
+						imgData.data[o + 1] = g;
+						imgData.data[o + 2] = b;
+						imgData.data[o + 3] = 255;
+					}
+					ctx.putImageData(imgData, 0, 0);
+					
+					const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+					const a = document.createElement('a');
+					a.href = URL.createObjectURL(blob);
+					a.download = `${name}.png`;
+					a.click();
+					
+					await sleep(150);
+				}
+			}
+			
+			// function downloadDitherBmp() {
+			// 		const i1 = parseInt($('ditherIdx1').value);
+			// 		const i2 = parseInt($('ditherIdx2').value);
+			// 		const level = $('ditherLevel').value;
+			// 		const ctx = $('ditherCanvas').getContext('2d');
+			// 		const id = ctx.getImageData(0, 0, 32, 32);
+			// 		const indices = new Uint8Array(1024);
+			
+			// 		for (let i = 0; i < 1024; i++) {
+			// 			const r = id.data[i * 4], g = id.data[i * 4 + 1], b = id.data[i * 4 + 2];
+			// 			const d1 = Math.pow(r - activePalette[i1][0], 2) + Math.pow(g - activePalette[i1][1], 2) + Math.pow(b - activePalette[i1][2], 2);
+			// 			const d2 = Math.pow(r - activePalette[i2][0], 2) + Math.pow(g - activePalette[i2][1], 2) + Math.pow(b - activePalette[i2][2], 2);
+			// 			indices[i] = d1 < d2 ? i1 : i2;
+			// 		}
+			
+			// 		const row = 32, pxSize = 1024, fSize = 54 + 1024 + pxSize;
+			// 		const buf = new ArrayBuffer(fSize), v = new DataView(buf);
+			// 		v.setUint16(0, 0x4D42, true); v.setUint32(2, fSize, true); v.setUint32(10, 1078, true);
+			// 		v.setUint32(14, 40, true); v.setUint32(18, 32, true); v.setUint32(22, 32, true);
+			// 		v.setUint16(26, 1, true); v.setUint16(28, 8, true); v.setUint32(34, pxSize, true); v.setUint32(46, 256, true);
+			
+			// 		for (let i = 0; i < 256; i++) {
+			// 			const rgb = activePalette[i];
+			// 			v.setUint8(54 + i * 4, rgb[2]); v.setUint8(55 + i * 4, rgb[1]); v.setUint8(56 + i * 4, rgb[0]);
+			// 		}
+			// 		for (let y = 0; y < 32; y++) {
+			// 			const off = 1078 + (31 - y) * 32;
+			// 			for (let x = 0; x < 32; x++) v.setUint8(off + x, indices[y * 32 + x]);
+			// 		}
+			// 		const a = document.createElement('a');
+			// 		a.href = URL.createObjectURL(new Blob([buf], { type: 'image/bmp' }));
+			// 		a.download = `dither_${level}_${i1}_${i2}.bmp`;
+			// 		a.click();
+			// 	}
+			
+			function downloadDitherBmp() {
+				const i1 = parseInt($('ditherIdx1').value), i2 = parseInt($('ditherIdx2').value), level = $('ditherLevel').value;
+				const ctx = $('ditherCanvas').getContext('2d'), id = ctx.getImageData(0, 0, 32, 32), indices = new Uint8Array(1024);
 				for (let i = 0; i < 1024; i++) {
 					const r = id.data[i * 4], g = id.data[i * 4 + 1], b = id.data[i * 4 + 2];
 					const d1 = Math.pow(r - activePalette[i1][0], 2) + Math.pow(g - activePalette[i1][1], 2) + Math.pow(b - activePalette[i1][2], 2);
 					const d2 = Math.pow(r - activePalette[i2][0], 2) + Math.pow(g - activePalette[i2][1], 2) + Math.pow(b - activePalette[i2][2], 2);
 					indices[i] = d1 < d2 ? i1 : i2;
 				}
-
-				const row = 32, pxSize = 1024, fSize = 54 + 1024 + pxSize;
-				const buf = new ArrayBuffer(fSize), v = new DataView(buf);
-				v.setUint16(0, 0x4D42, true); v.setUint32(2, fSize, true); v.setUint32(10, 1078, true);
-				v.setUint32(14, 40, true); v.setUint32(18, 32, true); v.setUint32(22, 32, true);
-				v.setUint16(26, 1, true); v.setUint16(28, 8, true); v.setUint32(34, pxSize, true); v.setUint32(46, 256, true);
-
-				for (let i = 0; i < 256; i++) {
-					const rgb = activePalette[i];
-					v.setUint8(54 + i * 4, rgb[2]); v.setUint8(55 + i * 4, rgb[1]); v.setUint8(56 + i * 4, rgb[0]);
-				}
-				for (let y = 0; y < 32; y++) {
-					const off = 1078 + (31 - y) * 32;
-					for (let x = 0; x < 32; x++) v.setUint8(off + x, indices[y * 32 + x]);
-				}
+				const buffer = generateIndexedBmp(32, 32, indices, activePalette);
 				const a = document.createElement('a');
-				a.href = URL.createObjectURL(new Blob([buf], { type: 'image/bmp' }));
+				a.href = URL.createObjectURL(new Blob([buffer], { type: 'image/bmp' }));
 				a.download = `dither_${level}_${i1}_${i2}.bmp`;
 				a.click();
 			}
-	</script>
-</body>
-
+		</script>
+	</body>	
 </html>

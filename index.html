@@ -633,8 +633,7 @@
 								style="width:100%;">
 							</div>
 							<div style="text-align: center;">
-								<canvas id="ditherCanvas" width="32" height="32" class="canvas-preview"
-								style="width:96px; height:96px;"></canvas>
+								<canvas id="ditherCanvas" width="32" height="32" class="canvas-preview" style="width:64px; height:64px;"></canvas>
 								<button onclick="downloadDitherBmp()" style="font-size:8px;">Save BMP</button>
 							</div>
 						</div>
@@ -1714,7 +1713,6 @@
 				const id = ctx.createImageData(w, h);
 				
 				if (pat === 'fs') {
-					// Floyd-Steinberg approximation of a target color using two indices
 					const target = hexToRgb($('targetColor').value) || { r: 128, g: 128, b: 128 };
 					let pixels = new Float32Array(w * h * 3);
 					for (let i = 0; i < w * h; i++) { pixels[i * 3] = target.r; pixels[i * 3 + 1] = target.g; pixels[i * 3 + 2] = target.b; }
@@ -1744,15 +1742,24 @@
 					}
 				} else {
 					const bayer4 = [[0, 8, 2, 10], [12, 4, 14, 6], [3, 11, 1, 9], [15, 7, 13, 5]];
+
+					const period = 4;
+					const threshold = period * level;
+
 					for (let i = 0; i < w * h; i++) {
 						const x = i % w, y = Math.floor(i / w);
 						let use1 = true;
+
 						if (pat === 'checker') use1 = (x + y) % 2 === 0;
-						else if (pat === 'v-stripes') use1 = x % 2 === 0;
-						else if (pat === 'h-stripes') use1 = y % 2 === 0;
+						else if (pat === 'v-stripes') {
+							use1 = (x % period) < threshold;
+						}
+						else if (pat === 'h-stripes') {
+							use1 = (y % period) < threshold;
+						}
 						else if (pat === 'noise') use1 = Math.random() > level;
 						else if (pat === 'bayer') use1 = (bayer4[y % 4][x % 4] / 16) > level;
-						
+
 						const idx = use1 ? i1 : i2;
 						const rgb = activePalette[idx];
 						id.data[i * 4] = rgb[0]; id.data[i * 4 + 1] = rgb[1]; id.data[i * 4 + 2] = rgb[2]; id.data[i * 4 + 3] = 255;

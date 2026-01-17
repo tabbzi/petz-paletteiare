@@ -451,7 +451,7 @@
 						
 						<div class="flex-1">
 							<div class="effect-shelf">
-								<label>External Palettes (.bmp, .act, .pal, .png)</label>
+								<label>External Palettes (.bmp, .act, .png)</label>
 								<p class="instr">Batch load 256-color palettes from a folder, which will appear in dropdown.
 								</p>
 								<input type="file" id="palDir" webkitdirectory directory multiple class="hidden">
@@ -755,13 +755,11 @@
 		<!-- COLOR IMPORTER -->
 		<div class="card" id="header-import-colors">
 			<h3>Color Importer</h3>
-			<p class="instr">Extract colors from <strong>ACT</strong>, <strong>PAL</strong>, or <strong><a
-				href="https://chromora.com/">Chromora</a> JSON</strong> palette files. These can be distributed
-				randomly into the start/mid/end anchors for ramps.</p>
+			<p class="instr">Extract colors from <strong>ACT</strong> or <strong><a href="https://chromora.com/">Chromora</a> JSON</strong> palette files. These can be distributed randomly into the start/mid/end anchors for ramps.</p>
 				<div class="flex-row" style="align-items: center;">
 					<div class="flex-1">
 						<label>Select Seed File</label>
-						<input type="file" id="seedFileInput" accept=".act, .pal, .json" style="margin: 10px 0;">
+						<input type="file" id="seedFileInput" accept=".act, .json" style="margin: 10px 0;">
 						<button onclick="handleSeedUpload()" style="width:100%; flex: 1; margin: 0;">Read Colors</button>
 					</div>
 					<div class="flex-1">
@@ -1929,7 +1927,7 @@
 			// File Input & Output
 			async function parsePal(f) {
 				const b = await f.arrayBuffer(), bytes = new Uint8Array(b), ext = f.name.split('.').pop().toLowerCase(); let p = [];
-				if (ext === 'act' || ext === 'pal') { if (bytes.length < 768) return null; for (let i = 0; i < 768; i += 3) p.push([bytes[i], bytes[i + 1], bytes[i + 2]]); }
+				if (ext === 'act') { if (bytes.length < 768) return null; for (let i = 0; i < 768; i += 3) p.push([bytes[i], bytes[i + 1], bytes[i + 2]]); }
 				else if (ext === 'bmp') { const o = 54; if (bytes.length < o + 1024) return null; for (let i = 0; i < 1024; i += 4) p.push([bytes[o + i + 2], bytes[o + i + 1], bytes[o + i]]); }
 				else if (ext === 'png') {
 					let offset = 8; while (offset < bytes.length) {

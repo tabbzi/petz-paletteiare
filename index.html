@@ -741,9 +741,9 @@
 					<select id="rampLogic">
 						<option value="light-dark">Light to Dark</option>
 						<option value="dark-light">Dark to Light</option>
-						<option value="random-chaos">Random Chaos (Ignore Anchors)</option>
-						<option value="saturated">Vivid Ramp</option>
-						<option value="vibrant-shift">Color Shift Ramp</option>
+						<!-- <option value="random-chaos">Random Chaos (Ignore Anchors)</option> -->
+						<option value="saturation-shift">Saturation Shift</option>
+						<option value="hue-shift">Hue Shift</option>
 					</select>
 				</div>
 				<div class="flex-1" style="display: flex; gap: 10px;">
@@ -1495,33 +1495,78 @@
 				const logic = $('rampLogic').value;
 				const targetPal = overwrite ? activePalette : JSON.parse(JSON.stringify(activePalette));
 				let changed = false;
+
 				rangeSettings.forEach(range => {
 					if (!range.randomize) return;
 					changed = true;
 					const count = range.e - range.s + 1;
-					if (logic === 'random-chaos') { for (let i = 0; i < count; i++) targetPal[range.s + i] = [Math.random() * 255, Math.random() * 255, Math.random() * 255]; return; }
-					let start = range.useStart ? hexToRgb(range.startCol) : hsvToRgb(Math.random(), 0.6, (logic === 'dark-light' ? 0.35 : 0.75));
-					let end = range.useEnd ? hexToRgb(range.endCol) : hsvToRgb(Math.random(), 0.7, (logic === 'dark-light' ? 0.75 : 0.35));
+
+					// if (logic === 'random-chaos') {
+					// 	for (let i = 0; i < count; i++) {
+					// 		targetPal[range.s + i] = [Math.random() * 255, Math.random() * 255, Math.random() * 255];
+					// 	}
+					// 	return;
+					// }
+
+					const baseH = Math.random();
+
+					let start;
+					if (range.useStart) {
+						start = hexToRgb(range.startCol);
+					} else {
+						let l = (logic === 'dark-light') ? 0.35 : 0.75;
+						start = hsvToRgb(baseH, 0.5, l);
+					}
+
+					let end;
+					if (range.useEnd) {
+						end = hexToRgb(range.endCol);
+					} else {
+						let l = (logic === 'dark-light') ? 0.75 : 0.35;
+						end = hsvToRgb(baseH, 0.6, l);
+					}
+
 					let mid = range.useMid ? hexToRgb(range.midCol) : null;
+
 					for (let i = 0; i < count; i++) {
-						const t = count > 1 ? i / (count - 1) : 0; let color;
+						const t = count > 1 ? i / (count - 1) : 0;
+						let color;
+
 						if (mid && t <= 0.5) color = lerp(start, mid, t * 2);
 						else if (mid && t > 0.5) color = lerp(mid, end, (t - 0.5) * 2);
 						else color = lerp(start, end, t);
-						if (logic === 'saturated') { const h = rgbToHsv(color.r, color.g, color.b); color = hsvToRgb(h.h, 0.95, h.v); }
-						if (logic === 'vibrant-shift') { const h = rgbToHsv(color.r, color.g, color.b); color = hsvToRgb((h.h + (t * 0.1)) % 1, h.s, h.v); }
+
+						if (logic === 'saturation-shift') {
+							const h = rgbToHsv(color.r, color.g, color.b);
+							color = hsvToRgb(h.h, 0.95, h.v);
+						}
+
+						if (logic === 'hue-shift') {
+							const h = rgbToHsv(color.r, color.g, color.b);
+							color = hsvToRgb((h.h + (t * 0.1)) % 1, h.s, h.v);
+						}
+
 						targetPal[range.s + i] = [color.r, color.g, color.b];
 					}
 				});
-				if (!changed) return alert("Select 'Rand' for at least one range.");
+
+				if (!changed) return alert("Select at least one range to randomize.");
+
 				if (!overwrite) {
-					const name = "Gen-" + new Date().toLocaleTimeString();
+					const name = "paletteiare_gen_" + new Date().toLocaleTimeString();
 					loadedPalettes[name] = targetPal;
-					updatePaletteSelect(); $('paletteSelect').value = name;
+					updatePaletteSelect();
+					$('paletteSelect').value = name;
 				}
-				activePalette = targetPal; originalPalBeforeHue = null; saveActiveToMemory(); renderSwatchGrid(); refreshLabAnchors(); 
+
+				activePalette = targetPal;
+				originalPalBeforeHue = null;
+				saveActiveToMemory();
+				renderSwatchGrid();
+				refreshLabAnchors();
 				// updatePaletteCode();
 			}
+
 			function lerp(a, b, t) { return { r: Math.round(a.r + (b.r - a.r) * t), g: Math.round(a.g + (b.g - a.g) * t), b: Math.round(a.b + (b.b - a.b) * t) }; }
 			
 			// Import Colors

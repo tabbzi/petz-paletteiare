@@ -399,7 +399,7 @@
 		
 		<div class="container">
 			<h1>Petz Paletteaire</h1>
-			<h2>v2.1</h2>
+			<h2>v2.2</h2>
 			<p style="text-align:center;">A handy web app for working with P.F. Magic palettes and swapping palettes in bulk!</p>
 			<p style="text-align:center;">- Kathleen @ <a href="https://www.tabbloza.com/petz" target="_blank">Tabbloza</a>
 			</p>
@@ -748,7 +748,7 @@
 				</div>
 				<div class="flex-1" style="display: flex; gap: 10px;">
 					<button onclick="generatePalette(true)" style="width:100%; flex: 1; margin: 0;">Modify Current Palette</button>
-					<button onclick="generatePalette(false)" style="width:100%; flex: 1; margin: 0;">Generate NewPalette</button>
+					<button onclick="generatePalette(false)" style="width:100%; flex: 1; margin: 0;">Generate New Palette</button>
 				</div>
 			</div>
 		</div>
@@ -1453,12 +1453,31 @@
 			
 			function applyShuffleHues() {
 				rangeSettings.forEach((r, i) => {
-					['start', 'mid', 'end'].forEach(type => {
-						const rgb = hexToRgb(r[`${type}Col`]);
-						const hsv = rgbToHsv(rgb.r, rgb.g, rgb.b);
-						const newHex = rgbToHex(hsvToRgb(Math.random(), hsv.s, hsv.v).r, hsvToRgb(Math.random(), hsv.s, hsv.v).g, hsvToRgb(Math.random(), hsv.s, hsv.v).b);
-						r[`${type}Col`] = newHex; if ($(`${type}Preview-${i}`)) $(`${type}Preview-${i}`).style.background = newHex;
-					});
+					const midH = Math.random();
+					const midS = 0.4 + Math.random() * 0.5;
+					const midL = 0.4 + Math.random() * 0.2;
+
+					const midRgb = hsvToRgb(midH, midS, midL);
+					r.midCol = rgbToHex(midRgb.r, midRgb.g, midRgb.b);
+
+					const startL = Math.min(0.95, midL + 0.3);
+					const startS = Math.max(0.1, midS - 0.2);
+					const startRgb = hsvToRgb(midH, startS, startL);
+					r.startCol = rgbToHex(startRgb.r, startRgb.g, startRgb.b);
+
+					const endL = Math.max(0.05, midL - 0.3);
+					const endS = Math.min(1.0, midS + 0.1);
+					const endRgb = hsvToRgb(midH, endS, endL);
+					r.endCol = rgbToHex(endRgb.r, endRgb.g, endRgb.b);
+
+					if ($(`startPreview-${i}`)) $(`startPreview-${i}`).style.background = r.startCol;
+					if ($(`midPreview-${i}`)) $(`midPreview-${i}`).style.background = r.midCol;
+					if ($(`endPreview-${i}`)) $(`endPreview-${i}`).style.background = r.endCol;
+
+					r.useStart = r.useMid = r.useEnd = true;
+					if ($(`useStart-${i}`)) $(`useStart-${i}`).checked = true;
+					if ($(`useMid-${i}`)) $(`useMid-${i}`).checked = true;
+					if ($(`useEnd-${i}`)) $(`useEnd-${i}`).checked = true;
 				});
 			}
 			
@@ -1481,8 +1500,8 @@
 					changed = true;
 					const count = range.e - range.s + 1;
 					if (logic === 'random-chaos') { for (let i = 0; i < count; i++) targetPal[range.s + i] = [Math.random() * 255, Math.random() * 255, Math.random() * 255]; return; }
-					let start = range.useStart ? hexToRgb(range.startCol) : hsvToRgb(Math.random(), 0.6, (logic === 'dark-light' ? 0.2 : 0.9));
-					let end = range.useEnd ? hexToRgb(range.endCol) : hsvToRgb(Math.random(), 0.7, (logic === 'dark-light' ? 0.9 : 0.2));
+					let start = range.useStart ? hexToRgb(range.startCol) : hsvToRgb(Math.random(), 0.6, (logic === 'dark-light' ? 0.35 : 0.75));
+					let end = range.useEnd ? hexToRgb(range.endCol) : hsvToRgb(Math.random(), 0.7, (logic === 'dark-light' ? 0.75 : 0.35));
 					let mid = range.useMid ? hexToRgb(range.midCol) : null;
 					for (let i = 0; i < count; i++) {
 						const t = count > 1 ? i / (count - 1) : 0; let color;
@@ -1746,8 +1765,10 @@
 			};
 			
 			$('run').onclick = async () => {
-				const imgs = Array.from($('imgDir').files).filter(f => f.name.endsWith('.png')); if (!imgs.length) return alert("Select PNG images.");
-				const allPals = Object.keys(loadedPalettes);
+				const imgs = Array.from($('imgDir').files).filter(f => f.name.endsWith('.png'));
+				if (!imgs.length) return alert("Select PNG images.");
+				const allPals = Object.keys(loadedPalettes).filter(pName => pName !== "Babyz Base Game");
+				// const allPals = Object.keys(loadedPalettes);
 				cachedImageGroups = {}; $('previewContainer').innerHTML = 'Processing...'; $('links').innerHTML = '';
 				for (const imgF of imgs) {
 					const img = await readImg(imgF); cachedImageGroups[imgF.name] = [];

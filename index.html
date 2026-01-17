@@ -592,9 +592,7 @@
 							<option value="warmtocool">Warm to Cool</option>
 						</select>
 					</div>
-					<button id="downloadAll" onclick="downloadAllGenerated()"
-					style="display:none; background: #4caf50; color:#fff;">Download All
-					Swaps</button>
+					<button id="downloadAll" onclick="downloadAllGenerated()" style="display:none; background: #4caf50; color:#fff;">Download All Swaps</button>
 				</div>
 				
 				<div id="selectionList" style="margin-bottom: 20px;">
@@ -1845,7 +1843,7 @@
 			
 			function updateSelectionOutput() { $('palOut').value = Array.from(selectedPals).join('\n'); }
 			$('sortOption').onchange = renderGroups;
-			$('downloadAll').onclick = () => document.querySelectorAll('#links a.dl').forEach(a => a.click());
+			// $('downloadAll').onclick = () => document.querySelectorAll('#links a.dl').forEach(a => a.click());
 			
 			
 			function downloadAllGenerated() {
